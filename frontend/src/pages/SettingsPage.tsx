@@ -9,6 +9,8 @@ import {
   Globe,
   Eye,
   Type,
+  Sun,
+  Moon,
   Check,
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
@@ -29,6 +31,8 @@ export const SettingsPage: React.FC = () => {
     setFontSize,
     highContrast,
     setHighContrast,
+    darkMode,
+    toggleDarkMode,
   } = useLanguage();
 
   const langList: { code: Language; name: string; flag: string; dir: string }[] = [
@@ -139,7 +143,38 @@ export const SettingsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 3. High Contrast Toggle */}
+          {/* 3. Dark Mode / Light Mode Toggle */}
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                {darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-slate-900">
+                  {darkMode ? t.accessibility.darkMode : t.accessibility.lightMode}
+                </div>
+                <div className="text-[11px] text-slate-500 max-w-md mt-0.5 leading-relaxed">
+                  {darkMode
+                    ? 'Le mode sombre est activé, réduisant la fatigue oculaire dans les environnements sombres.'
+                    : 'Le mode clair est activé avec un contraste de lecture optimal.'}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={darkMode}
+              onClick={toggleDarkMode}
+              className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${
+                darkMode ? 'bg-edu-600 justify-end' : 'bg-slate-200 justify-start'
+              }`}
+            >
+              <span className="w-4 h-4 rounded-full bg-white shadow-2xs block" />
+            </button>
+          </div>
+
+          {/* 4. High Contrast Toggle */}
           <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-amber-50 text-amber-600">

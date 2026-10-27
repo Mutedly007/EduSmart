@@ -70,6 +70,9 @@ export interface TranslationSchema {
     highContrastDesc: string;
     toggleContrast: string;
     switchLang: string;
+    darkMode: string;
+    lightMode: string;
+    theme: string;
   };
   competences: {
     pageTitle: string;
