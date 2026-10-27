@@ -25,14 +25,27 @@ import { StatusDot } from '../components/ui/StatusDot';
 import { useBackendHealth } from '../hooks/useBackendHealth';
 import { api } from '../services/api';
 import type { GraphStats } from '../types';
+import { useLanguage, useTranslation } from '../i18n/LanguageContext';
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { language, isRtl } = useLanguage();
   const { health, isLoading: isHealthLoading, isError: isHealthError } = useBackendHealth(15000);
   const [stats, setStats] = useState<GraphStats | null>(null);
   const [nlQuery, setNlQuery] = useState('');
 
-  const sampleQuestions = [
+  const sampleQuestions = language === 'ar' ? [
+    { text: 'ما هي الدروس التي تدرسها ESPRIT ؟', lang: 'AR' },
+    { text: 'من يدرّس مادة الذكاء الاصطناعي ؟', lang: 'AR' },
+    { text: 'ما هي الكفاءات التقنية المطلوبة ؟', lang: 'AR' },
+    { text: 'ما هي التكوينات بنمط هجين ؟', lang: 'AR' },
+  ] : language === 'en' ? [
+    { text: 'Which courses are taught by ESPRIT?', lang: 'EN' },
+    { text: 'Who teaches Machine Learning?', lang: 'EN' },
+    { text: 'What are the prerequisites for Artificial Intelligence?', lang: 'EN' },
+    { text: 'Which programs are in Hybrid modality?', lang: 'EN' },
+  ] : [
     { text: 'Quels cours sont dispensés par ESPRIT ?', lang: 'FR' },
     { text: 'Who teaches Machine Learning?', lang: 'EN' },
     { text: 'Quels sont les prérequis du cours Intelligence Artificielle ?', lang: 'FR' },
@@ -76,12 +89,10 @@ export const DashboardPage: React.FC = () => {
             <Sparkles className="w-3.5 h-3.5" /> Web Semantics Academic Platform — Live Pipeline
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
-            EduSmart Semantic Knowledge Platform
+            {t.dashboard.welcomeTitle}
           </h1>
           <p className="mt-2 text-sm md:text-base text-slate-600 leading-relaxed">
-            A semantic web knowledge discovery platform for the <strong>Education and Training</strong> domain.
-            Bridging structured OWL 2 DL domain ontologies, Apache Jena Fuseki SPARQL endpoints,
-            and deterministic rule-based natural language translation.
+            {t.dashboard.welcomeSubtitle}
           </p>
         </div>
 
@@ -89,18 +100,20 @@ export const DashboardPage: React.FC = () => {
         <div className="mt-6 pt-6 border-t border-slate-100">
           <form onSubmit={handleSearchSubmit}>
             <label htmlFor="dashboard-nl-input" className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              Ask the Semantic Knowledge Graph in Natural Language
+              {language === 'ar' ? 'اسأل الرسم البياني المعرفي بلغة طبيعية' : language === 'en' ? 'Ask the Semantic Knowledge Graph in Natural Language' : 'Interroger le Graphe de Connaissances en Langage Naturel'}
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <Search className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search className={`w-5 h-5 absolute top-1/2 -translate-y-1/2 text-slate-400 ${isRtl ? 'right-3.5' : 'left-3.5'}`} />
                 <input
                   id="dashboard-nl-input"
                   type="text"
                   value={nlQuery}
                   onChange={(e) => setNlQuery(e.target.value)}
-                  placeholder="Posez une question en français ou anglais (ex: 'Quels cours sont dispensés par ESPRIT ?')..."
-                  className="w-full pl-11 pr-4 py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all shadow-inner"
+                  placeholder={language === 'ar' ? 'اطرح سؤالاً بالعربية أو الفرنسية أو الإنجليزية...' : language === 'en' ? 'Ask a question in English or French...' : 'Posez une question en français ou anglais...'}
+                  className={`w-full py-3 bg-slate-50/70 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all shadow-inner ${
+                    isRtl ? 'pr-11 pl-4' : 'pl-11 pr-4'
+                  }`}
                 />
               </div>
               <button
@@ -108,20 +121,22 @@ export const DashboardPage: React.FC = () => {
                 className="px-6 py-3 rounded-xl bg-edu-600 hover:bg-edu-700 text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all hover:scale-[1.01] active:scale-[0.99]"
               >
                 <Sparkles className="w-4 h-4" />
-                <span>Translate & Query</span>
+                <span>{language === 'ar' ? 'ترجمة واستعلام' : language === 'en' ? 'Translate & Query' : 'Traduire & Interroger'}</span>
               </button>
             </div>
           </form>
 
           {/* Sample Prompts */}
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-slate-400 font-medium">Try asking:</span>
+            <span className="text-xs text-slate-400 font-medium">
+              {language === 'ar' ? 'أمثلة للأسئلة :' : language === 'en' ? 'Try asking:' : 'Exemples de requêtes :'}
+            </span>
             {sampleQuestions.map((q, idx) => (
               <button
                 key={idx}
                 type="button"
                 onClick={() => handleSampleClick(q.text)}
-                className="text-xs bg-slate-100 hover:bg-edu-50 hover:text-edu-700 hover:border-edu-200 border border-transparent text-slate-600 px-3 py-1 rounded-lg transition-all text-left flex items-center gap-1.5"
+                className="text-xs bg-slate-100 hover:bg-edu-50 hover:text-edu-700 hover:border-edu-200 border border-transparent text-slate-600 px-3 py-1 rounded-lg transition-all text-start flex items-center gap-1.5"
               >
                 <span className="text-[10px] font-bold bg-white text-slate-500 px-1 py-0.2 rounded border border-slate-200">{q.lang}</span>
                 {q.text}
@@ -263,9 +278,11 @@ export const DashboardPage: React.FC = () => {
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-            Ontology & Knowledge Graph Metrics
+            {language === 'ar' ? 'مؤشرات الرسم البياني المعرفي والأنطولوجيا' : language === 'en' ? 'Ontology & Knowledge Graph Metrics' : 'Indicateurs de l’Ontologie & du Graphe de Connaissances'}
           </h2>
-          <span className="text-xs text-slate-400">Synchronized with Apache Jena Fuseki</span>
+          <span className="text-xs text-slate-400">
+            {language === 'ar' ? 'مُتزامنة مع Apache Jena Fuseki' : language === 'en' ? 'Synchronized with Apache Jena Fuseki' : 'Synchronisé avec Apache Jena Fuseki'}
+          </span>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -274,7 +291,7 @@ export const DashboardPage: React.FC = () => {
             className="bg-white border border-slate-200/90 rounded-xl p-4 shadow-subtle hover:border-edu-300 hover:shadow-card transition-all group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">Ontological Classes</span>
+              <span className="text-xs font-medium text-slate-500">{t.dashboard.classesStat}</span>
               <Badge variant="blue" size="sm">5 Branches</Badge>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
@@ -291,7 +308,7 @@ export const DashboardPage: React.FC = () => {
             className="bg-white border border-slate-200/90 rounded-xl p-4 shadow-subtle hover:border-edu-300 hover:shadow-card transition-all group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">RDF Triples Stored</span>
+              <span className="text-xs font-medium text-slate-500">{t.dashboard.triplesStat}</span>
               <Badge variant="emerald" size="sm">Live TDB2</Badge>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
@@ -308,7 +325,7 @@ export const DashboardPage: React.FC = () => {
             className="bg-white border border-slate-200/90 rounded-xl p-4 shadow-subtle hover:border-edu-300 hover:shadow-card transition-all group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">Object & Data Properties</span>
+              <span className="text-xs font-medium text-slate-500">{t.dashboard.propertiesStat}</span>
               <Badge variant="navy" size="sm">OWL 2</Badge>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
@@ -325,7 +342,7 @@ export const DashboardPage: React.FC = () => {
             className="bg-white border border-slate-200/90 rounded-xl p-4 shadow-subtle hover:border-edu-300 hover:shadow-card transition-all group"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-slate-500">Named Individuals</span>
+              <span className="text-xs font-medium text-slate-500">{t.dashboard.individualsStat}</span>
               <Badge variant="navy" size="sm">Instances</Badge>
             </div>
             <div className="mt-2 flex items-baseline gap-2">
@@ -341,15 +358,15 @@ export const DashboardPage: React.FC = () => {
 
       {/* 5. 5-Branch Ontology Architecture Navigator */}
       <Card
-        title="EduSmart 5-Branch Ontology Hierarchy"
-        subtitle="Core conceptual taxonomy verified with Protégé and HermiT"
+        title={t.dashboard.branchesTitle}
+        subtitle={t.dashboard.branchesSubtitle}
         icon={<FileCode2 className="w-5 h-5 text-edu-600" />}
         actions={
           <Link
             to="/ontology"
             className="text-xs font-semibold text-edu-600 hover:text-edu-700 flex items-center gap-1"
           >
-            Browse Class Tree <ArrowRight className="w-3.5 h-3.5" />
+            {language === 'ar' ? 'استعراض شجرة الأصناف' : language === 'en' ? 'Browse Class Tree' : 'Explorer l’arbre des classes'} <ArrowRight className={`w-3.5 h-3.5 ${isRtl ? 'rotate-180' : ''}`} />
           </Link>
         }
       >
@@ -361,22 +378,29 @@ export const DashboardPage: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
               <BookOpen className="w-4 h-4" />
             </div>
-            <h4 className="text-xs font-bold text-blue-900">Apprentissage</h4>
+            <h4 className="text-xs font-bold text-blue-900">
+              {language === 'ar' ? 'التعلم' : language === 'en' ? 'Learning' : 'Apprentissage'}
+            </h4>
             <p className="text-[11px] text-blue-700 mt-0.5 leading-snug">
-              Modalités d'apprentissage, activités pédagogiques et évaluations.
+              {language === 'ar' ? 'أنماط التعلم والأنشطة البيداغوجية والتقييمات.' : 'Modalités d\'apprentissage, activités pédagogiques et évaluations.'}
             </p>
           </Link>
 
           <Link
-            to="/ontology"
-            className="p-3 bg-amber-50/60 hover:bg-amber-100/60 border border-amber-200 rounded-xl transition-all group"
+            to="/competences"
+            className="p-3 bg-amber-50/60 hover:bg-amber-100/60 border border-amber-200 rounded-xl transition-all group ring-1 ring-amber-300/60 shadow-xs"
           >
             <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
               <Award className="w-4 h-4" />
             </div>
-            <h4 className="text-xs font-bold text-amber-900">Compétence</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-amber-900">
+                {language === 'ar' ? 'الكفاءات' : language === 'en' ? 'Competences' : 'Compétence'}
+              </h4>
+              <span className="text-[9px] bg-amber-200/80 text-amber-800 font-bold px-1.5 py-0.2 rounded-full">CRUD</span>
+            </div>
             <p className="text-[11px] text-amber-700 mt-0.5 leading-snug">
-              Compétences techniques, programmation, data science et soft skills.
+              {language === 'ar' ? 'كفاءات تقنية، برمجة، لغوية ومستويات المهارة.' : 'Compétences techniques, programmation, data science et soft skills.'}
             </p>
           </Link>
 
@@ -387,22 +411,29 @@ export const DashboardPage: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
               <GraduationCap className="w-4 h-4" />
             </div>
-            <h4 className="text-xs font-bold text-emerald-900">Formation</h4>
+            <h4 className="text-xs font-bold text-emerald-900">
+              {language === 'ar' ? 'التكوين' : language === 'en' ? 'Training' : 'Formation'}
+            </h4>
             <p className="text-[11px] text-emerald-700 mt-0.5 leading-snug">
-              Licences, diplômes, cours académiques et modules spécialisés.
+              {language === 'ar' ? 'شهادات، ديبلومات، دروس أكاديمية ووحدات دراسية.' : 'Licences, diplômes, cours académiques et modules spécialisés.'}
             </p>
           </Link>
 
           <Link
-            to="/ontology"
-            className="p-3 bg-purple-50/60 hover:bg-purple-100/60 border border-purple-200 rounded-xl transition-all group"
+            to="/personnes"
+            className="p-3 bg-purple-50/60 hover:bg-purple-100/60 border border-purple-200 rounded-xl transition-all group ring-1 ring-purple-300/60 shadow-xs"
           >
             <div className="w-8 h-8 rounded-lg bg-purple-500 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
               <Users className="w-4 h-4" />
             </div>
-            <h4 className="text-xs font-bold text-purple-900">Personnes</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="text-xs font-bold text-purple-900">
+                {language === 'ar' ? 'الأشخاص' : language === 'en' ? 'Persons' : 'Personnes'}
+              </h4>
+              <span className="text-[9px] bg-purple-200/80 text-purple-800 font-bold px-1.5 py-0.2 rounded-full">CRUD</span>
+            </div>
             <p className="text-[11px] text-purple-700 mt-0.5 leading-snug">
-              Enseignants, étudiants inscrits, tuteurs et grades académiques.
+              {language === 'ar' ? 'أساتذة، طلاب مسجلين، مؤطرون ورتب أكاديمية.' : 'Enseignants, étudiants inscrits, tuteurs et grades académiques.'}
             </p>
           </Link>
 
@@ -413,9 +444,11 @@ export const DashboardPage: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-sky-500 text-white flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform">
               <Building2 className="w-4 h-4" />
             </div>
-            <h4 className="text-xs font-bold text-sky-900">Établissement</h4>
+            <h4 className="text-xs font-bold text-sky-900">
+              {language === 'ar' ? 'المؤسسة' : language === 'en' ? 'Institution' : 'Établissement'}
+            </h4>
             <p className="text-[11px] text-sky-700 mt-0.5 leading-snug">
-              Universités, écoles d'ingénieurs (ex: ESPRIT) et instituts.
+              {language === 'ar' ? 'جامعات، مدارس مهندسين (مثل ESPRIT) ومعاهد.' : 'Universités, écoles d\'ingénieurs (ex: ESPRIT) et instituts.'}
             </p>
           </Link>
         </div>
