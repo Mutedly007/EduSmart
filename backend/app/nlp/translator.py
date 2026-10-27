@@ -26,6 +26,12 @@ SAMPLE_QUESTIONS: List[SampleQuestion] = [
         description="Trouve les formations et programmes académiques proposés par l'université ESPRIT.",
     ),
     SampleQuestion(
+        category="Établissements & Offre",
+        language="fr",
+        question="Quels sont les établissements à Ariana ?",
+        description="Filtre les établissements universitaires situés dans la ville d'Ariana.",
+    ),
+    SampleQuestion(
         category="Enseignants & Pédagogie",
         language="fr",
         question="Qui enseigne le cours de Java ?",
@@ -38,10 +44,40 @@ SAMPLE_QUESTIONS: List[SampleQuestion] = [
         description="Liste l'ensemble des matières dispensées par Ali.",
     ),
     SampleQuestion(
+        category="Enseignants & Pédagogie",
+        language="fr",
+        question="Quels sont les enseignants avec grade Professeur ?",
+        description="Filtre les enseignants ayant le grade académique de professeur.",
+    ),
+    SampleQuestion(
+        category="Étudiants & Parcours",
+        language="fr",
+        question="Quels sont les étudiants avec spécialité Informatique ?",
+        description="Filtre les étudiants inscrits dans la spécialité Informatique.",
+    ),
+    SampleQuestion(
+        category="Étudiants & Parcours",
+        language="fr",
+        question="Quels sont les étudiants avec statut Actif ?",
+        description="Liste les étudiants ayant le statut académique Actif.",
+    ),
+    SampleQuestion(
         category="Étudiants & Parcours",
         language="fr",
         question="Quel programme suit Ahmed ?",
         description="Affiche le programme académique et l'université d'appartenance d'Ahmed.",
+    ),
+    SampleQuestion(
+        category="Cours & Crédits",
+        language="fr",
+        question="Quels sont les cours avec plus de 3 crédits ?",
+        description="Filtre les cours et formations ayant une charge horaire supérieure à 3 crédits ECTS.",
+    ),
+    SampleQuestion(
+        category="Cours & Crédits",
+        language="fr",
+        question="Quels sont les cours avec 4 crédits ?",
+        description="Recherche les cours validant exactement 4 crédits.",
     ),
     SampleQuestion(
         category="Modalités d'Apprentissage",
@@ -78,6 +114,24 @@ SAMPLE_QUESTIONS: List[SampleQuestion] = [
         language="en",
         question="Who teaches Java?",
         description="Finds the instructor for Java course.",
+    ),
+    SampleQuestion(
+        category="Faculty",
+        language="en",
+        question="Show teachers with grade Professeur",
+        description="Filters faculty members holding Professor rank.",
+    ),
+    SampleQuestion(
+        category="Students & Enrollment",
+        language="en",
+        question="List of students with specialite Informatique",
+        description="Filters students majoring in Informatique.",
+    ),
+    SampleQuestion(
+        category="Courses & Credits",
+        language="en",
+        question="Courses with more than 3 credits",
+        description="Filters courses that provide more than 3 ECTS credits.",
     ),
     SampleQuestion(
         category="Training Modalities",
