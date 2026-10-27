@@ -282,7 +282,7 @@ export const PersonnesPage: React.FC = () => {
                 type="text"
                 value={chatCommand}
                 onChange={(e) => setChatCommand(e.target.value)}
-                placeholder="Tapez une commande (ex: 'Créer un étudiant nommé Yassine Ben Ali' ou 'Supprimer la personne Ali')..."
+                placeholder="Tapez une commande (ex: 'Créer un étudiant...', 'Modifier l\'email de Ali à ali@esprit.tn', 'Supprimer...')..."
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all"
               />
             </div>
@@ -301,8 +301,9 @@ export const PersonnesPage: React.FC = () => {
             <span className="text-[11px] text-slate-400">Exemples rapides :</span>
             {[
               'Créer un étudiant nommé Yassine Ben Ali',
-              'Créer un enseignant nommé Dr. Sami Trabelsi',
-              'Supprimer la personne Ali',
+              'Modifier l\'email de Ali à ali@esprit.tn',
+              'Modifier le grade de Ali en Professeur Titulaire',
+              'Supprimer l\'étudiant Yassine',
               'Lister les enseignants',
             ].map((chip, idx) => (
               <button

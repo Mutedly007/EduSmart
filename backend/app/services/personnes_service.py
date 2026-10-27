@@ -199,6 +199,20 @@ INSERT DATA {{
                 WHERE {{ OPTIONAL {{ edu:{safe_id} edu:telephone ?t }} }}"""
             )
 
+        if data.grade is not None:
+            sparql_parts.append(
+                f"""DELETE {{ edu:{safe_id} edu:grade ?g }}
+                INSERT {{ edu:{safe_id} edu:grade "{data.grade.strip()}" }}
+                WHERE {{ OPTIONAL {{ edu:{safe_id} edu:grade ?g }} }}"""
+            )
+
+        if data.specialite is not None:
+            sparql_parts.append(
+                f"""DELETE {{ edu:{safe_id} edu:specialite ?s }}
+                INSERT {{ edu:{safe_id} edu:specialite "{data.specialite.strip()}" }}
+                WHERE {{ OPTIONAL {{ edu:{safe_id} edu:specialite ?s }} }}"""
+            )
+
         if not sparql_parts:
             return {"success": True, "message": "Aucun champ modifié.", "sparql": ""}
 
@@ -304,7 +318,93 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                 "records": [item.dict() for item in all_items],
             }
 
-        # 3. LIST COMMAND: e.g. "lister les enseignants", "show all students"
+        # 3. UPDATE COMMAND: e.g.
+        # "modifier l'email de Ali à ali@edusmart.tn"
+        # "changer le grade de Ali en Professeur Titulaire"
+        # "modifier le téléphone de Ahmed à +216 22 111 333"
+        # "renommer Ali en Ali Ben Salah"
+        # "update email of Ali to ali@edusmart.tn"
+        update_match = re.search(
+            r"\b(modifier|changer|mettre [aà] jour|update|change|set)\b\s+(le\s+|la\s+|l['\s])?(?P<prop>email|courriel|mail|grade|t[ée]l[ée]phone|tel|num[ée]ro|phone|sp[ée]cialit[ée]|specialite|fili[èe]re|specialty|classe|class|type|nom|name|label)\b\s+(de\s+|d['\s]|for\s+|of\s+)?(?P<person>[a-z0-9_à-ÿ\s]+?)\s+(à|[aà]|en|par|vers|to|=)\s+(?P<value>.+)",
+            cmd_lower,
+            re.IGNORECASE,
+        )
+
+        rename_match = None
+        if not update_match:
+            rename_match = re.search(
+                r"\b(renommer|rename)\b\s+(la\s+personne\s+|l['\s]?[eé]tudiant\s+|l['\s]enseignant\s+)?(?P<person>[a-z0-9_à-ÿ\s]+?)\s+(en|vers|to|as)\s+(?P<value>.+)",
+                cmd_lower,
+                re.IGNORECASE,
+            )
+
+        if update_match or rename_match:
+            if update_match:
+                raw_prop = update_match.group("prop").strip().lower()
+                raw_person = update_match.group("person").strip()
+                raw_value = update_match.group("value").strip()
+            else:
+                raw_prop = "nom"
+                raw_person = rename_match.group("person").strip()
+                raw_value = rename_match.group("value").strip()
+
+            value_clean = re.sub(r'["\']', '', raw_value).strip()
+            person_clean = re.sub(r'["\']', '', raw_person).strip()
+            person_clean = re.sub(r"^(l['\s]|la\s+|le\s+|the\s+)?(personne|etudiant|étudiant|enseignant|professeur|prof|chercheur|individu)\s+", "", person_clean, flags=re.IGNORECASE).strip()
+            target_id = _sanitize_id(person_clean)
+
+            # Match individual
+            current = await self.get_all()
+            found = next(
+                (item for item in current if item.id.lower() == target_id.lower() or item.label.lower() == person_clean.lower() or person_clean.lower() in item.label.lower() or person_clean.lower() in item.id.lower()),
+                None,
+            )
+
+            if not found:
+                return {
+                    "success": False,
+                    "action": "update",
+                    "message": f"Personne '{person_clean}' introuvable dans l'ontologie. Vérifiez le nom de l'individu.",
+                    "sparql": None,
+                    "affected_id": None,
+                    "records": [item.dict() for item in current],
+                }
+
+            update_data = PersonneUpdate()
+            prop_normalized = "propriété"
+
+            if any(k in raw_prop for k in ["email", "courriel", "mail"]):
+                update_data.email = value_clean
+                prop_normalized = "email"
+            elif "grade" in raw_prop:
+                update_data.grade = value_clean
+                prop_normalized = "grade"
+            elif any(k in raw_prop for k in ["tel", "numéro", "phone"]):
+                update_data.telephone = value_clean
+                prop_normalized = "téléphone"
+            elif any(k in raw_prop for k in ["specialit", "fili"]):
+                update_data.specialite = value_clean
+                prop_normalized = "spécialité"
+            elif any(k in raw_prop for k in ["classe", "class", "type"]):
+                c_clean = value_clean.capitalize().replace(" ", "_")
+                update_data.class_name = c_clean
+                prop_normalized = "classe"
+            elif any(k in raw_prop for k in ["nom", "name", "label"]):
+                update_data.label = value_clean
+                prop_normalized = "nom"
+
+            res = await self.update(found.id, update_data)
+            all_items = await self.get_all()
+            return {
+                "success": res["success"],
+                "action": "update",
+                "message": f"Le {prop_normalized} de '{found.label}' a été mis à jour à '{value_clean}' via SPARQL DELETE/INSERT.",
+                "sparql": res["sparql"],
+                "affected_id": found.id,
+                "records": [item.dict() for item in all_items],
+            }
+
+        # 4. LIST COMMAND: e.g. "lister les enseignants", "show all students"
         if any(k in cmd_lower for k in ["lister", "liste", "show", "afficher", "quels sont", "tous les", "toutes les"]):
             target_cls = None
             if any(k in cmd_lower for k in ["enseignant", "prof", "teacher"]):
