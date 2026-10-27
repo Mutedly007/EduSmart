@@ -27,6 +27,14 @@ from .personne import (
     PersonneCommandRequest,
     PersonneCommandResponse,
 )
+from .competence import (
+    CompetenceItem,
+    CompetenceCreate,
+    CompetenceUpdate,
+    CompetenceClassItem,
+    CompetenceCommandRequest,
+    CompetenceCommandResponse,
+)
 
 __all__ = [
     "AppInfoResponse",
@@ -44,4 +52,16 @@ __all__ = [
     "NlpQueryResponse",
     "ExtractedEntity",
     "SampleQuestion",
+    "PersonneItem",
+    "PersonneCreate",
+    "PersonneUpdate",
+    "PersonneClassItem",
+    "PersonneCommandRequest",
+    "PersonneCommandResponse",
+    "CompetenceItem",
+    "CompetenceCreate",
+    "CompetenceUpdate",
+    "CompetenceClassItem",
+    "CompetenceCommandRequest",
+    "CompetenceCommandResponse",
 ]
