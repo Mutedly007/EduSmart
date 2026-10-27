@@ -204,3 +204,75 @@ export interface CompetenceCommandResponse {
   affected_id?: string | null;
   records?: Record<string, any>[] | null;
 }
+
+export interface EtablissementRelationItem {
+  id: string;
+  uri: string;
+  label: string;
+  type_name?: string | null;
+}
+
+export interface EtablissementItem {
+  id: string;
+  uri: string;
+  label: string;
+  class_name: string;
+  ville?: string | null;
+  adresse?: string | null;
+  site_web?: string | null;
+  telephone?: string | null;
+  email?: string | null;
+  statut?: string | null;
+  description?: string | null;
+  mode_enseignement?: string | null;
+  domaine?: string | null;
+  formations_organisees: EtablissementRelationItem[];
+  programmes_proposes: EtablissementRelationItem[];
+  etudiants_inscrits: EtablissementRelationItem[];
+  enseignants_affilies: EtablissementRelationItem[];
+}
+
+export interface EtablissementCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  ville?: string;
+  adresse?: string;
+  site_web?: string;
+  telephone?: string;
+  email?: string;
+  statut?: string;
+  description?: string;
+  mode_enseignement?: string;
+  domaine?: string;
+}
+
+export interface EtablissementUpdate {
+  label?: string;
+  class_name?: string;
+  ville?: string;
+  adresse?: string;
+  site_web?: string;
+  telephone?: string;
+  email?: string;
+  statut?: string;
+  description?: string;
+  mode_enseignement?: string;
+  domaine?: string;
+}
+
+export interface EtablissementClassItem {
+  class_name: string;
+  label: string;
+  category?: string | null;
+  parent?: string | null;
+}
+
+export interface EtablissementCommandResponse {
+  success: boolean;
+  action: string;
+  message: string;
+  sparql?: string | null;
+  affected_id?: string | null;
+  records?: Record<string, any>[] | null;
+}

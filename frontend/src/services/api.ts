@@ -21,6 +21,11 @@ import type {
   CompetenceCreate,
   CompetenceClassItem,
   CompetenceCommandResponse,
+  EtablissementItem,
+  EtablissementCreate,
+  EtablissementUpdate,
+  EtablissementClassItem,
+  EtablissementCommandResponse,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -203,6 +208,64 @@ class ApiClient {
 
   async executeCompetenceChat(command: string): Promise<CompetenceCommandResponse> {
     return this.request<CompetenceCommandResponse>('/api/competences/chat', {
+      method: 'POST',
+      body: JSON.stringify({ command }),
+    });
+  }
+
+  // Établissements API
+  async getEtablissements(params?: {
+    name?: string;
+    class_name?: string;
+    ville?: string;
+    statut?: string;
+  }): Promise<EtablissementItem[]> {
+    const query = new URLSearchParams();
+    if (params?.name) query.set('name', params.name);
+    if (params?.class_name) query.set('class_name', params.class_name);
+    if (params?.ville) query.set('ville', params.ville);
+    if (params?.statut) query.set('statut', params.statut);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    return this.request<EtablissementItem[]>(`/api/etablissements${qs}`);
+  }
+
+  async getEtablissementClasses(): Promise<EtablissementClassItem[]> {
+    return this.request<EtablissementClassItem[]>('/api/etablissements/classes');
+  }
+
+  async getEtablissement(id: string): Promise<EtablissementItem> {
+    return this.request<EtablissementItem>(`/api/etablissements/${encodeURIComponent(id)}`);
+  }
+
+  async exportEtablissementTurtle(id: string): Promise<string> {
+    const url = `${this.baseUrl}/api/etablissements/${encodeURIComponent(id)}/turtle`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}: Failed to export Turtle`);
+    return await res.text();
+  }
+
+  async createEtablissement(data: EtablissementCreate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>('/api/etablissements', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateEtablissement(id: string, data: EtablissementUpdate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/etablissements/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteEtablissement(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/etablissements/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async executeEtablissementChat(command: string): Promise<EtablissementCommandResponse> {
+    return this.request<EtablissementCommandResponse>('/api/etablissements/chat', {
       method: 'POST',
       body: JSON.stringify({ command }),
     });
