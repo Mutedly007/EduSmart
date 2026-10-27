@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Users,
   Award,
+  BookOpen,
   Building2,
   Search,
   Terminal,
@@ -14,31 +15,41 @@ import {
   GraduationCap,
   ExternalLink,
 } from 'lucide-react';
+import { useTranslation } from '../../i18n/LanguageContext';
 
 interface SidebarProps {
   className?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
+  const { t, isRtl } = useTranslation();
+
   const navItems = [
     {
       to: '/',
-      label: 'Dashboard',
+      label: t.nav.dashboard,
       icon: LayoutDashboard,
-      description: 'System overview & status',
+      description: t.nav.dashboardDesc,
     },
     {
       to: '/personnes',
-      label: 'Personnes',
+      label: t.nav.personnes,
       icon: Users,
-      description: 'Gestion des individus (CRUD)',
-      badge: 'CRUD',
+      description: t.nav.personnesDesc,
+      badge: t.nav.crudBadge,
     },
     {
       to: '/competences',
-      label: 'Compétences',
+      label: t.nav.competences,
       icon: Award,
-      description: 'Gestion des compétences (CRUD)',
+      description: t.nav.competencesDesc,
+      badge: t.nav.crudBadge,
+    },
+    {
+      to: '/formations',
+      label: 'Formations',
+      icon: BookOpen,
+      description: 'Gestion des formations (CRUD)',
       badge: 'CRUD',
     },
     {
@@ -50,45 +61,47 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
     },
     {
       to: '/search',
-      label: 'Natural Language Search',
+      label: t.nav.search,
       icon: Search,
-      description: 'Question-to-SPARQL pipeline',
+      description: t.nav.searchDesc,
     },
     {
       to: '/sparql',
-      label: 'SPARQL Explorer',
+      label: t.nav.sparql,
       icon: Terminal,
-      description: 'Direct query workspace',
+      description: t.nav.sparqlDesc,
     },
     {
       to: '/graph',
-      label: 'Knowledge Graph',
+      label: t.nav.graph,
       icon: Share2,
-      description: 'Entity & relation visualizer',
+      description: t.nav.graphDesc,
     },
     {
       to: '/data',
-      label: 'Data Management',
+      label: t.nav.data,
       icon: Database,
-      description: 'Triple store & datasets',
+      description: t.nav.dataDesc,
     },
     {
       to: '/ontology',
-      label: 'Ontology Overview',
+      label: t.nav.ontology,
       icon: FileCode2,
-      description: 'Protégé model & classes',
+      description: t.nav.ontologyDesc,
     },
     {
       to: '/settings',
-      label: 'Settings',
+      label: t.nav.settings,
       icon: Settings,
-      description: 'Environment & endpoints',
+      description: t.nav.settingsDesc,
     },
   ];
 
   return (
     <aside
-      className={`w-64 bg-white border-r border-slate-200/90 flex flex-col justify-between flex-shrink-0 select-none ${className}`}
+      className={`w-64 bg-white ${
+        isRtl ? 'border-l' : 'border-r'
+      } border-slate-200/90 flex flex-col justify-between flex-shrink-0 select-none ${className}`}
     >
       <div>
         {/* Brand Header */}
@@ -101,10 +114,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-base text-slate-900 tracking-tight">EduSmart</span>
                 <span className="text-[10px] font-semibold bg-edu-50 text-edu-700 px-1.5 py-0.2 rounded border border-edu-200">
-                  v0.1.0
+                  {t.nav.version}
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 font-normal">Semantic Web Platform</p>
+              <p className="text-[11px] text-slate-500 font-normal">{t.nav.platform}</p>
             </div>
           </NavLink>
         </div>
@@ -112,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
         {/* Navigation Section */}
         <div className="px-3 py-4">
           <p className="px-3 text-[11px] font-semibold tracking-wider text-slate-400 uppercase mb-2">
-            Modules
+            {t.nav.modules}
           </p>
           <nav className="space-y-1">
             {navItems.map((item) => {
@@ -160,11 +173,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
           <div className="flex items-center justify-between mb-1">
             <span className="font-semibold text-slate-800">Web Semantics</span>
             <span className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-mono">
-              Phase 1
+              {t.nav.phase}
             </span>
           </div>
           <p className="text-[11px] text-slate-500 leading-relaxed mb-2">
-            Education & Training Knowledge Engineering project.
+            {t.nav.projectDesc}
           </p>
           <a
             href="https://protege.stanford.edu"
@@ -172,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-[11px] text-edu-600 hover:text-edu-700 hover:underline"
           >
-            Protégé & HermiT Specs <ExternalLink className="w-3 h-3" />
+            Protégé & HermiT Specs <ExternalLink className={`w-3 h-3 ${isRtl ? 'rotate-180' : ''}`} />
           </a>
         </div>
       </div>

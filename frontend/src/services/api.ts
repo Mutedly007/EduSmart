@@ -21,6 +21,11 @@ import type {
   CompetenceCreate,
   CompetenceClassItem,
   CompetenceCommandResponse,
+  FormationItem,
+  FormationCreate,
+  FormationUpdate,
+  FormationClassItem,
+  FormationCommandResponse,
   EtablissementItem,
   EtablissementCreate,
   EtablissementUpdate,
@@ -213,7 +218,47 @@ class ApiClient {
     });
   }
 
-  // Établissements API
+  // --- Formation CRUD & TALN ---
+  async getFormations(params?: { name?: string; class_name?: string }): Promise<FormationItem[]> {
+    const query = new URLSearchParams();
+    if (params?.name) query.set('name', params.name);
+    if (params?.class_name) query.set('class_name', params.class_name);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    return this.request<FormationItem[]>(`/api/formations${qs}`);
+  }
+
+  async getFormationClasses(): Promise<FormationClassItem[]> {
+    return this.request<FormationClassItem[]>('/api/formations/classes');
+  }
+
+  async createFormation(data: FormationCreate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>('/api/formations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateFormation(id: string, data: FormationUpdate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/formations/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteFormation(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/formations/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async executeFormationCommand(command: string): Promise<FormationCommandResponse> {
+    return this.request<FormationCommandResponse>('/api/formations/chat', {
+      method: 'POST',
+      body: JSON.stringify({ command }),
+    });
+  }
+
+  // --- Établissements CRUD & TALN ---
   async getEtablissements(params?: {
     name?: string;
     class_name?: string;
