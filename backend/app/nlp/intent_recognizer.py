@@ -36,16 +36,23 @@ class IntentRecognizer:
         if "prérequis" in lower or "prerequis" in lower or "prerequisite" in lower or "pre-requisite" in lower:
             return "COURSE_PREREQUISITES"
 
-        # 2. Competencies / skills developed
-        if (
-            "compétence" in lower
-            or "competence" in lower
-            or "skill" in lower
-            or "développ" in lower
-            or "develop" in lower
-            or "acqui" in lower
-        ):
-            return "COURSE_SKILLS"
+        # 2. Competencies & Skills
+        has_comp_word = bool(
+            re.search(r"\b(comp[ée]tences?|skills?|linguistiques?|transversales?)\b", lower)
+        )
+        has_dev_word = bool(
+            re.search(r"\b(d[ée]velopp\w*|develop\w*|acqui\w*)\b", lower)
+        )
+        has_course_rel = has_course_entity or bool(
+            re.search(r"\b(cours\s+(?:de\s+|d'|pour)?|courses?\s+(?:on|for)?)\b", lower)
+        )
+
+        if has_comp_word or has_dev_word:
+            # If asking about course-skill relationship (e.g. "quelles compétences développe le cours Java ?", "quels cours développent la compétence X ?")
+            if has_dev_word or (has_comp_word and has_course_rel):
+                return "COURSE_SKILLS"
+            # Otherwise direct competence query (e.g. "quelles sont les compétences linguistiques ?", "liste des compétences", "skills with level advanced")
+            return "LIST_COMPETENCES"
 
         # 3. Establishments proposing courses / formations (e.g. ESPRIT)
         if ("propos" in lower or "organis" in lower or "offr" in lower or "offer" in lower or "provid" in lower) and (

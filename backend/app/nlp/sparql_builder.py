@@ -211,6 +211,54 @@ class SparqlBuilder:
         if "ESPRIT" in entity_map or re.search(r"\besprit\b", lower):
             filters["target_establishment"] = "ESPRIT"
 
+        # 13. Competence level / Niveau (e.g. "niveau Débutant", "niveau Intermédiaire", "niveau Avancé", "level Beginner", "intermediate")
+        niveau_match = re.search(
+            r"\b(?:niveau|level)\b\s*(?:\b(?:est|en|in|with|de|is)\b|[:=])?\s*(?P<val>[a-zA-Z0-9_à-ÿÀ-Ý]+)",
+            question,
+            re.IGNORECASE,
+        )
+        if niveau_match:
+            filters["niveau"] = niveau_match.group("val").strip()
+        elif re.search(r"\b(d[ée]butants?|beginner|beginners)\b", lower):
+            filters["niveau"] = "Débutant"
+        elif re.search(r"\b(interm[ée]diaires?|intermediate)\b", lower):
+            filters["niveau"] = "Intermédiaire"
+        elif re.search(r"\b(avanc[ée]s?|advanced)\b", lower):
+            filters["niveau"] = "Avancé"
+
+        # 14. Competence category (Linguistique, Technique, Transversale)
+        if re.search(r"\b(linguistiques?|linguistic|langues?|languages?|anglais|english|fran[çc]ais|french)\b", lower):
+            filters["competence_category"] = "Linguistique"
+        elif re.search(r"\b(techniques?|technical|programmation|informatique)\b", lower) and not re.search(r"\b(cours|formation)\b", lower):
+            filters["competence_category"] = "Technique"
+        elif re.search(r"\b(transversales?|transversal|soft\s*skills?|collaboration|communication|organisation)\b", lower):
+            filters["competence_category"] = "Transversale"
+
+        # 15. Domain / Domaine
+        dom_match = re.search(
+            r"\b(?:domaine|domain)\b\s*(?:\b(?:est|en|in|with|de|is)\b|[:=])?\s*(?P<val>[a-zA-Z0-9_à-ÿÀ-Ý]+)",
+            question,
+            re.IGNORECASE,
+        )
+        if dom_match:
+            filters["domaine"] = dom_match.group("val").strip()
+
+        # 16. Target skill name detection
+        skill_candidates = [
+            ("anglais des affaires", "Anglais_Des_Affaires"),
+            ("anglais", "Anglais_Des_Affaires"),
+            ("algorithmique", "Algorithmique_Individu"),
+            ("programmation", "Programmation_Individu"),
+            ("python", "Competence_Python"),
+            ("ia", "Competence_IA"),
+        ]
+        for phrase, sk_id in skill_candidates:
+            if sk_id in entity_map or re.search(r"\b" + re.escape(phrase) + r"\b", lower):
+                # Only set if not already matched as a course or other target
+                if not re.search(r"\b(cours|enseignant|étudiant)\s+" + re.escape(phrase), lower):
+                    filters["target_skill"] = sk_id
+                    break
+
         return filters
 
     def build(self, intent: str, entities: List[ExtractedEntity], question: str) -> Tuple[str, str]:
@@ -327,12 +375,19 @@ SELECT DISTINCT ?cours ?nomCours ?prerequis ?nomPrerequis ?description WHERE {{
 
         elif intent == "COURSE_SKILLS":
             target_course = filters.get("target_course")
-            course_filter = ""
+            target_skill = filters.get("target_skill")
+            clauses = []
+            expl_parts = ["Recherche des compétences développées par les cours via la relation 'développe'"]
+
             if target_course:
-                course_filter = f'\n    FILTER(CONTAINS(LCASE(STR(?cours)), "{target_course.lower()}") || CONTAINS(LCASE(STR(?nomCours)), "{target_course.lower()}"))'
-                explanation = f"Recherche des compétences développées par le cours '{target_course}' via la relation 'développe'."
-            else:
-                explanation = "Recherche des compétences développées par les cours via la relation 'développe'."
+                clauses.append(f'FILTER(CONTAINS(LCASE(STR(?cours)), "{target_course.lower()}") || CONTAINS(LCASE(STR(?nomCours)), "{target_course.lower()}"))')
+                expl_parts.append(f"pour le cours '{target_course}'")
+
+            if target_skill:
+                clauses.append(f'FILTER(CONTAINS(LCASE(STR(?competence)), "{target_skill.lower()}") || CONTAINS(LCASE(STR(?nomCompetence)), "{target_skill.lower()}"))')
+                expl_parts.append(f"associée à la compétence '{target_skill}'")
+
+            filter_str = ("\n    " + "\n    ".join(clauses)) if clauses else ""
 
             query = f"""{PREFIXES}
 SELECT DISTINCT ?cours ?nomCours ?competence ?nomCompetence ?niveau ?description WHERE {{
@@ -340,8 +395,70 @@ SELECT DISTINCT ?cours ?nomCours ?competence ?nomCompetence ?niveau ?description
     OPTIONAL {{ ?cours edu:nom ?nomCours }}
     OPTIONAL {{ ?competence edu:nom ?nomCompetence }}
     OPTIONAL {{ ?competence edu:niveau ?niveau }}
-    OPTIONAL {{ ?competence edu:description ?description }}{course_filter}
+    OPTIONAL {{ ?competence edu:description ?description }}{filter_str}
 }}"""
+            return query, " ".join(expl_parts) + "."
+
+        elif intent == "LIST_COMPETENCES":
+            filter_clauses = []
+            expl_filters = []
+
+            # 1. Category hierarchy filter (Linguistique, Technique, Transversale)
+            cat = filters.get("competence_category")
+            if cat == "Linguistique":
+                filter_clauses.append("    ?type rdfs:subClassOf* edu:Compétence_Linguistique .")
+                expl_filters.append("catégorie Linguistique (langues, compréhension, expression)")
+            elif cat == "Technique":
+                filter_clauses.append("    ?type rdfs:subClassOf* edu:Compétence_Technique .")
+                expl_filters.append("catégorie Technique (informatique, programmation, réseaux)")
+            elif cat == "Transversale":
+                filter_clauses.append("    ?type rdfs:subClassOf* edu:Compétence_Transversale .")
+                expl_filters.append("catégorie Transversale (collaboration, communication, organisation)")
+            else:
+                filter_clauses.append("    ?type rdfs:subClassOf* edu:Compétence .")
+
+            # 2. Niveau filter (Débutant, Intermédiaire, Avancé)
+            if "niveau" in filters:
+                niv_val = filters["niveau"]
+                filter_clauses.append(
+                    f'    ?competence edu:niveau ?niveau .\n    FILTER(CONTAINS(LCASE(STR(?niveau)), "{niv_val.lower()}"))'
+                )
+                expl_filters.append(f"niveau '{niv_val}'")
+            else:
+                filter_clauses.append("    OPTIONAL { ?competence edu:niveau ?niveau }")
+
+            # 3. Domaine filter
+            if "domaine" in filters:
+                dom_val = filters["domaine"]
+                filter_clauses.append(
+                    f'    ?competence edu:aPourDomaine ?domaine .\n    FILTER(CONTAINS(LCASE(STR(?domaine)), "{dom_val.lower()}"))'
+                )
+                expl_filters.append(f"domaine '{dom_val}'")
+            else:
+                filter_clauses.append("    OPTIONAL { ?competence edu:aPourDomaine ?domaine }")
+
+            # 4. Nom filter
+            nom_val = filters.get("nom") or filters.get("target_skill")
+            if nom_val:
+                filter_clauses.append(
+                    f'    FILTER(CONTAINS(LCASE(STR(?nom)), "{nom_val.lower()}") || CONTAINS(LCASE(STR(?competence)), "{nom_val.lower()}"))'
+                )
+                expl_filters.append(f"nom contenant '{nom_val}'")
+
+            clauses_str = "\n".join(filter_clauses)
+            query = f"""{PREFIXES}
+SELECT DISTINCT ?competence ?nom ?type ?nomType ?niveau ?description ?domaine WHERE {{
+    ?competence a ?type .
+    FILTER(?type != owl:NamedIndividual && ?type != edu:Compétence)
+{clauses_str}
+    OPTIONAL {{ ?competence edu:nom ?nom }}
+    OPTIONAL {{ ?type rdfs:label ?nomType }}
+    OPTIONAL {{ ?competence edu:description ?description }}
+}}"""
+            if expl_filters:
+                explanation = f"Liste des compétences filtrée par: {', '.join(expl_filters)}."
+            else:
+                explanation = "Liste de toutes les compétences enregistrées dans l'ontologie (techniques, linguistiques, transversales)."
             return query, explanation
 
         elif intent == "EXAM_DETAILS":

@@ -94,6 +94,18 @@ SAMPLE_QUESTIONS: List[SampleQuestion] = [
     SampleQuestion(
         category="Compétences & Prérequis",
         language="fr",
+        question="Quelles sont les compétences linguistiques ?",
+        description="Filtre les compétences de la branche linguistique (Anglais technique, compréhension, expression).",
+    ),
+    SampleQuestion(
+        category="Compétences & Prérequis",
+        language="fr",
+        question="Quelles sont les compétences de niveau Intermédiaire ?",
+        description="Affiche les compétences associées au niveau de maîtrise Intermédiaire.",
+    ),
+    SampleQuestion(
+        category="Compétences & Prérequis",
+        language="fr",
         question="Quelles compétences développe le cours Java ?",
         description="Affiche les compétences acquises grâce au cours Java.",
     ),
@@ -132,6 +144,18 @@ SAMPLE_QUESTIONS: List[SampleQuestion] = [
         language="en",
         question="Courses with more than 3 credits",
         description="Filters courses that provide more than 3 ECTS credits.",
+    ),
+    SampleQuestion(
+        category="Competencies & Skills",
+        language="en",
+        question="Show all linguistic skills",
+        description="Filters competencies categorized under the linguistic branch.",
+    ),
+    SampleQuestion(
+        category="Competencies & Skills",
+        language="en",
+        question="Skills with level Intermediate",
+        description="Filters skills classified with Intermediate proficiency.",
     ),
     SampleQuestion(
         category="Training Modalities",

@@ -83,3 +83,27 @@ def test_teacher_of_course_dynamic():
 
     assert intent == "TEACHER_OF_COURSE"
     assert "java" in sparql.lower()
+
+
+def test_competences_linguistique_filter():
+    q = "Quelles sont les compétences linguistiques ?"
+    doc, lang = preprocessor.process(q)
+    entities = entity_extractor.extract(q, doc)
+    intent = intent_recognizer.recognize(q, entities, lang)
+    sparql, explanation = sparql_builder.build(intent, entities, q)
+
+    assert intent == "LIST_COMPETENCES"
+    assert "Compétence_Linguistique" in sparql
+    assert "linguistique" in explanation.lower()
+
+
+def test_competences_niveau_filter():
+    q = "Quelles sont les compétences de niveau Intermédiaire ?"
+    doc, lang = preprocessor.process(q)
+    entities = entity_extractor.extract(q, doc)
+    intent = intent_recognizer.recognize(q, entities, lang)
+    sparql, explanation = sparql_builder.build(intent, entities, q)
+
+    assert intent == "LIST_COMPETENCES"
+    assert "FILTER(CONTAINS(LCASE(STR(?niveau)), \"intermédiaire\"))" in sparql
+
