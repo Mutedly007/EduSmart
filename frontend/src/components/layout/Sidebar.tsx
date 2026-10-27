@@ -4,6 +4,7 @@ import {
   LayoutDashboard,
   Users,
   Award,
+  BookOpen,
   Search,
   Terminal,
   Share2,
@@ -38,6 +39,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       label: 'Compétences',
       icon: Award,
       description: 'Gestion des compétences (CRUD)',
+      badge: 'CRUD',
+    },
+    {
+      to: '/formations',
+      label: 'Formations',
+      icon: BookOpen,
+      description: 'Gestion des formations (CRUD)',
       badge: 'CRUD',
     },
     {

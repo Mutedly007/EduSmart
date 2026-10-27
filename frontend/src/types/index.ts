@@ -204,3 +204,53 @@ export interface CompetenceCommandResponse {
   affected_id?: string | null;
   records?: Record<string, any>[] | null;
 }
+
+export interface FormationItem {
+  id: string;
+  uri: string;
+  label: string;
+  class_name: string;
+  description?: string | null;
+  duration?: number | string | null;
+  objective?: string | null;
+  price?: number | string | null;
+  domain?: string | null;
+  modality?: string | null;
+}
+
+export interface FormationCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  description?: string;
+  duration?: number;
+  objective?: string;
+  price?: number;
+  domain?: string;
+  modality?: string;
+}
+
+export interface FormationUpdate {
+  label?: string;
+  class_name?: string;
+  description?: string | null;
+  duration?: number | null;
+  objective?: string | null;
+  price?: number | null;
+  domain?: string | null;
+  modality?: string | null;
+}
+
+export interface FormationClassItem {
+  class_name: string;
+  label: string;
+}
+
+export interface FormationCommandResponse {
+  success: boolean;
+  action: string;
+  message: string;
+  sparql?: string | null;
+  affected_id?: string | null;
+  records?: FormationItem[] | null;
+}
