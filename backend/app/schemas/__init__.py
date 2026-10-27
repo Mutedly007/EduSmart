@@ -13,6 +13,12 @@ from .ontology import (
     OntologyIndividualDetail,
     OntologyIndividualsResponse,
 )
+from .nlp import (
+    NlpQueryRequest,
+    NlpQueryResponse,
+    ExtractedEntity,
+    SampleQuestion,
+)
 
 __all__ = [
     "AppInfoResponse",
@@ -26,4 +32,8 @@ __all__ = [
     "OntologyIndividualItem",
     "OntologyIndividualDetail",
     "OntologyIndividualsResponse",
+    "NlpQueryRequest",
+    "NlpQueryResponse",
+    "ExtractedEntity",
+    "SampleQuestion",
 ]

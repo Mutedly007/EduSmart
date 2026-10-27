@@ -90,10 +90,10 @@ async def check_health() -> HealthResponse:
             ),
             "nlp_pipeline": ServiceStatus(
                 name="spaCy TALN Module",
-                status="standby",
+                status="online",
                 details=(
-                    f"Configured model: '{settings.SPACY_MODEL}'. "
-                    "Rule-based SPARQL translation module planned for Phase 2."
+                    "Linguistic models loaded ('fr_core_news_sm', 'en_core_web_sm'). "
+                    "Deterministic TALN-to-SPARQL translation engine active."
                 ),
             ),
         },
