@@ -1,0 +1,58 @@
+# ==============================================================================
+# EduSmart .gitignore
+# Covers Node.js, Python, Fuseki storage, IDEs, and local environment files
+# ==============================================================================
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/*.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Python / Backend
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*/__pycache__/
+*.py[cod]
+*$py.class
+backend/.pytest_cache/
+backend/.coverage
+backend/htmlcov/
+backend/.mypy_cache/
+backend/.ruff_cache/
+backend/.venv/
+backend/venv/
+backend/ENV/
+backend/env/
+.venv/
+venv/
+
+# Local environment configuration (keep .env.example tracked)
+backend/.env
+frontend/.env
+
+# Apache Jena Fuseki storage
+infrastructure/fuseki/fuseki-data/
+infrastructure/fuseki/data/
+infrastructure/fuseki/run/
+infrastructure/fuseki/*.log
+infrastructure/fuseki/databases/
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+*.swp
+*.swo
+*~
+*.log

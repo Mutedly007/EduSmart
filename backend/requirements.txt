@@ -1,0 +1,21 @@
+# EduSmart Backend Dependencies
+# Semantic Web Application for Education & Training
+
+# Core Web Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.9.0
+pydantic-settings>=2.6.0
+python-dotenv>=1.0.1
+
+# Semantic Web & Knowledge Graph (Phase 2+)
+rdflib>=7.1.0
+
+# Natural Language Processing / TALN (Phase 2+)
+spacy>=3.8.0
+
+# HTTP Client for Fuseki SPARQL Protocol communication
+httpx>=0.27.2
+
+# Testing & Quality Assurance
+pytest>=8.3.0
