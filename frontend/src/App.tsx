@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
 import { PersonnesPage } from './pages/PersonnesPage';
+import { CompetencesPage } from './pages/CompetencesPage';
 import { NLSearchPage } from './pages/NLSearchPage';
 import { SPARQLExplorerPage } from './pages/SPARQLExplorerPage';
 import { KnowledgeGraphPage } from './pages/KnowledgeGraphPage';
@@ -17,6 +18,7 @@ export const App: React.FC = () => {
         <Route path="/" element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="personnes" element={<PersonnesPage />} />
+          <Route path="competences" element={<CompetencesPage />} />
           <Route path="search" element={<NLSearchPage />} />
           <Route path="sparql" element={<SPARQLExplorerPage />} />
           <Route path="graph" element={<KnowledgeGraphPage />} />
