@@ -165,3 +165,42 @@ export interface PersonneCommandResponse {
   affected_id?: string | null;
   records?: Record<string, any>[] | null;
 }
+
+export interface CompetenceItem {
+  id: string;
+  uri: string;
+  label: string;
+  class_name: string;
+  category?: string | null;
+  description?: string | null;
+  niveau?: string | null;
+  langue?: string | null;
+  prerequis_pour: string[];
+  developpee_par: string[];
+  acquise_par: string[];
+}
+
+export interface CompetenceCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  description?: string;
+  niveau?: string;
+  langue?: string;
+}
+
+export interface CompetenceClassItem {
+  class_name: string;
+  label: string;
+  category?: string | null;
+  parent?: string | null;
+}
+
+export interface CompetenceCommandResponse {
+  success: boolean;
+  action: string;
+  message: string;
+  sparql?: string | null;
+  affected_id?: string | null;
+  records?: Record<string, any>[] | null;
+}

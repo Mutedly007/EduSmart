@@ -283,7 +283,7 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                 "message": f"L'individu '{name_clean}' de type '{c_name}' a été créé dans Fuseki via SPARQL INSERT.",
                 "sparql": result["sparql"],
                 "affected_id": result["id"],
-                "records": [item.dict() for item in all_items],
+                "records": [item.model_dump() for item in all_items],
             }
 
         # 2. DELETE COMMAND: e.g. "supprimer l'étudiant Yassine", "delete person Ali"
@@ -315,7 +315,7 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                 "message": f"L'individu '{actual_id}' a été supprimé de Fuseki via SPARQL DELETE.",
                 "sparql": del_res["sparql"],
                 "affected_id": actual_id,
-                "records": [item.dict() for item in all_items],
+                "records": [item.model_dump() for item in all_items],
             }
 
         # 3. UPDATE COMMAND: e.g.
@@ -338,16 +338,18 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                 re.IGNORECASE,
             )
 
-        if update_match or rename_match:
-            if update_match:
-                raw_prop = update_match.group("prop").strip().lower()
-                raw_person = update_match.group("person").strip()
-                raw_value = update_match.group("value").strip()
-            else:
-                raw_prop = "nom"
-                raw_person = rename_match.group("person").strip()
-                raw_value = rename_match.group("value").strip()
+        if update_match:
+            raw_prop = update_match.group("prop").strip().lower()
+            raw_person = update_match.group("person").strip()
+            raw_value = update_match.group("value").strip()
+        elif rename_match:
+            raw_prop = "nom"
+            raw_person = rename_match.group("person").strip()
+            raw_value = rename_match.group("value").strip()
+        else:
+            raw_prop, raw_person, raw_value = "", "", ""
 
+        if raw_person and raw_value:
             value_clean = re.sub(r'["\']', '', raw_value).strip()
             person_clean = re.sub(r'["\']', '', raw_person).strip()
             person_clean = re.sub(r"^(l['\s]|la\s+|le\s+|the\s+)?(personne|etudiant|étudiant|enseignant|professeur|prof|chercheur|individu)\s+", "", person_clean, flags=re.IGNORECASE).strip()
@@ -367,7 +369,7 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                     "message": f"Personne '{person_clean}' introuvable dans l'ontologie. Vérifiez le nom de l'individu.",
                     "sparql": None,
                     "affected_id": None,
-                    "records": [item.dict() for item in current],
+                    "records": [item.model_dump() for item in current],
                 }
 
             update_data = PersonneUpdate()
@@ -401,7 +403,7 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                 "message": f"Le {prop_normalized} de '{found.label}' a été mis à jour à '{value_clean}' via SPARQL DELETE/INSERT.",
                 "sparql": res["sparql"],
                 "affected_id": found.id,
-                "records": [item.dict() for item in all_items],
+                "records": [item.model_dump() for item in all_items],
             }
 
         # 4. LIST COMMAND: e.g. "lister les enseignants", "show all students"
@@ -419,7 +421,7 @@ DELETE WHERE {{ ?s ?p edu:{safe_id} }}
                 "message": f"{len(items)} personnes trouvées dans l'ontologie.",
                 "sparql": f"{PREFIXES}\nSELECT ?ind ?label ?type WHERE {{ ?ind a ?type . ?type rdfs:subClassOf* edu:Personnes }}",
                 "affected_id": None,
-                "records": [item.dict() for item in items],
+                "records": [item.model_dump() for item in items],
             }
 
         # Unknown command fallback

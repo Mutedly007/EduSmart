@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
+  Award,
   Search,
   Terminal,
   Share2,
@@ -30,6 +31,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       label: 'Personnes',
       icon: Users,
       description: 'Gestion des individus (CRUD)',
+      badge: 'CRUD',
+    },
+    {
+      to: '/competences',
+      label: 'Compétences',
+      icon: Award,
+      description: 'Gestion des compétences (CRUD)',
       badge: 'CRUD',
     },
     {
