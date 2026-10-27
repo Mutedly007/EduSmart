@@ -1,5 +1,5 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Search,
   Bell,
@@ -22,12 +22,23 @@ const routeTitleMap: Record<string, { title: string; subtitle: string }> = {
 
 export const TopBar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [globalQuery, setGlobalQuery] = useState('');
   const currentRoute = routeTitleMap[location.pathname] || {
     title: 'EduSmart',
     subtitle: 'Semantic Web Knowledge Platform',
   };
 
   const { health, isLoading, isError, refetch } = useBackendHealth(20000);
+  const isFusekiOnline = health?.services?.apache_jena_fuseki?.status === 'online';
+
+  const handleGlobalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (globalQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(globalQuery.trim())}`);
+      setGlobalQuery('');
+    }
+  };
 
   return (
     <header className="h-16 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between gap-4 z-10">
@@ -45,19 +56,20 @@ export const TopBar: React.FC = () => {
         </p>
       </div>
 
-      {/* Global Search Placeholder & Actions */}
+      {/* Global Search & Actions */}
       <div className="flex items-center gap-3">
-        {/* Search Placeholder Input (Clearly inactive/placeholder) */}
-        <div className="relative hidden lg:block w-64">
+        {/* Global Search Form */}
+        <form onSubmit={handleGlobalSearch} className="relative hidden lg:block w-72">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            disabled
-            placeholder="Search classes, entities... (Ctrl+K)"
-            aria-label="Global search placeholder (inactive)"
-            className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-400 cursor-not-allowed select-none placeholder:text-slate-400"
+            value={globalQuery}
+            onChange={(e) => setGlobalQuery(e.target.value)}
+            placeholder="Search classes, entities (e.g. ESPRIT)..."
+            aria-label="Global natural language and entity search"
+            className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all"
           />
-        </div>
+        </form>
 
         {/* Live Status: FastAPI Backend */}
         <div
@@ -89,14 +101,18 @@ export const TopBar: React.FC = () => {
           </button>
         </div>
 
-        {/* Status: Fuseki Standby Indicator (Strictly Truthful) */}
+        {/* Status: Fuseki Live Indicator */}
         <div
           className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
-          title="Apache Jena Fuseki SPARQL endpoint is configured in standby. No active queries or datasets in Phase 1."
+          title={health?.services?.apache_jena_fuseki?.details || 'Apache Jena Fuseki SPARQL Endpoint'}
         >
           <Layers className="w-3.5 h-3.5 text-slate-500" />
           <span className="text-slate-600 font-medium">Fuseki:</span>
-          <StatusDot status="standby" label="Standby" />
+          {isFusekiOnline ? (
+            <StatusDot status="online" label="Online" showPing={true} />
+          ) : (
+            <StatusDot status="standby" label="Standby" />
+          )}
         </div>
 
         {/* Notification Icon Placeholder (Inactive) */}

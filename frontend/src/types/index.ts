@@ -36,3 +36,96 @@ export interface NavItem {
   badge?: string;
   isPhase1Ready?: boolean;
 }
+
+export interface GraphStats {
+  dataset: string;
+  engine: string;
+  status: string;
+  triples_count: number;
+  classes_count: number;
+  individuals_count: number;
+  object_properties_count: number;
+  datatype_properties_count: number;
+  endpoint_url: string;
+}
+
+export interface SparqlQueryResponse {
+  success: boolean;
+  query: string;
+  source: string;
+  results?: any;
+  records?: Record<string, any>[];
+  total_records: number;
+  execution_time_ms: number;
+  error?: string | null;
+}
+
+export interface OntologyClassItem {
+  uri: string;
+  name: string;
+  label?: string | null;
+  parent_uri?: string | null;
+  parent_name?: string | null;
+  subclasses_count: number;
+  instances_count: number;
+}
+
+export interface OntologyClassesResponse {
+  total_classes: number;
+  root_branches: string[];
+  classes: OntologyClassItem[];
+}
+
+export interface OntologyIndividualItem {
+  uri: string;
+  name: string;
+  types: string[];
+  label?: string | null;
+  properties: Record<string, any>;
+}
+
+export interface PropertyAssertion {
+  property_uri: string;
+  property_name: string;
+  property_type: 'object' | 'datatype';
+  value: any;
+  label?: string | null;
+}
+
+export interface OntologyIndividualDetail {
+  uri: string;
+  name: string;
+  types: string[];
+  attributes: Record<string, any>;
+  relationships: PropertyAssertion[];
+  incoming_relations: PropertyAssertion[];
+}
+
+export interface ExtractedEntity {
+  text: string;
+  entity_type: string;
+  matched_uri?: string | null;
+  matched_name?: string | null;
+}
+
+export interface NlpQueryResponse {
+  success: boolean;
+  question: string;
+  language: string;
+  intent: string;
+  entities: ExtractedEntity[];
+  sparql_query: string;
+  explanation: string;
+  records?: Record<string, any>[];
+  total_records: number;
+  execution_source?: string;
+  processing_time_ms: number;
+  error?: string | null;
+}
+
+export interface SampleQuestion {
+  category: string;
+  language: string;
+  question: string;
+  description: string;
+}
