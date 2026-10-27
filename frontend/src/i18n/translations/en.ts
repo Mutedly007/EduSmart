@@ -79,6 +79,9 @@ export const en: TranslationSchema = {
     highContrastDesc: 'Enhances visibility for visually impaired users by strengthening color contrast.',
     toggleContrast: 'Toggle High Contrast',
     switchLang: 'Switch language',
+    darkMode: 'Dark Mode',
+    lightMode: 'Light Mode',
+    theme: 'Display Theme',
   },
   competences: {
     pageTitle: 'Competencies Management',

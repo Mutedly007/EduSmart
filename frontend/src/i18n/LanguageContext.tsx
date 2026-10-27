@@ -19,6 +19,9 @@ interface LanguageContextProps {
   setFontSize: (size: FontSize) => void;
   highContrast: boolean;
   setHighContrast: (contrast: boolean) => void;
+  darkMode: boolean;
+  setDarkMode: (val: boolean) => void;
+  toggleDarkMode: () => void;
 }
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
@@ -39,6 +42,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // 3. High contrast state
   const [highContrast, setHighContrastState] = useState<boolean>(() => {
     return localStorage.getItem('edusmart_highcontrast') === 'true';
+  });
+
+  // 4. Dark Mode state
+  const [darkMode, setDarkModeState] = useState<boolean>(() => {
+    const saved = localStorage.getItem('edusmart_theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   const isRtl = language === 'ar';
@@ -71,6 +81,16 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [highContrast]);
 
+  // Apply dark mode class to document
+  useEffect(() => {
+    localStorage.setItem('edusmart_theme', darkMode ? 'dark' : 'light');
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
   };
@@ -81,6 +101,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const setHighContrast = (contrast: boolean) => {
     setHighContrastState(contrast);
+  };
+
+  const setDarkMode = (val: boolean) => {
+    setDarkModeState(val);
+  };
+
+  const toggleDarkMode = () => {
+    setDarkModeState((prev) => !prev);
   };
 
   const t = translations[language] || translations.fr;
@@ -96,6 +124,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setFontSize,
         highContrast,
         setHighContrast,
+        darkMode,
+        setDarkMode,
+        toggleDarkMode,
       }}
     >
       {children}

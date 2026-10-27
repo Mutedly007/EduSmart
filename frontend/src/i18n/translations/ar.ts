@@ -79,6 +79,9 @@ export const ar: TranslationSchema = {
     highContrastDesc: 'يعزز وضوح النصوص والألوان للأشخاص الذين يعانون من ضعف الرؤية.',
     toggleContrast: 'تفعيل التباين العالي',
     switchLang: 'تغيير اللغة',
+    darkMode: 'الوضع الداكن',
+    lightMode: 'الوضع الفاتح',
+    theme: 'المظهر',
   },
   competences: {
     pageTitle: 'إدارة الكفاءات والمهارات',

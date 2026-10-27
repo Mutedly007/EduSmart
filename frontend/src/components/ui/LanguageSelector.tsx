@@ -18,8 +18,8 @@ export const LanguageSelector: React.FC = () => {
     t,
     fontSize,
     setFontSize,
-    highContrast,
-    setHighContrast,
+    darkMode,
+    toggleDarkMode,
   } = useLanguage();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -140,17 +140,17 @@ export const LanguageSelector: React.FC = () => {
             </div>
           </div>
 
-          {/* High Contrast Toggle */}
-          <div className="px-3 py-2 border-t border-slate-100 flex items-center justify-between">
+          {/* Dark Mode / Light Mode Toggle */}
+          <div className="px-3 py-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {highContrast ? (
-                <Sun className="w-4 h-4 text-amber-500" />
+              {darkMode ? (
+                <Moon className="w-4 h-4 text-indigo-400" />
               ) : (
-                <Moon className="w-4 h-4 text-slate-400" />
+                <Sun className="w-4 h-4 text-amber-500" />
               )}
               <div>
-                <div className="text-xs font-semibold text-slate-800">
-                  {t.accessibility.highContrast}
+                <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                  {darkMode ? t.accessibility.darkMode : t.accessibility.lightMode}
                 </div>
               </div>
             </div>
@@ -158,10 +158,10 @@ export const LanguageSelector: React.FC = () => {
             <button
               type="button"
               role="switch"
-              aria-checked={highContrast}
-              onClick={() => setHighContrast(!highContrast)}
+              aria-checked={darkMode}
+              onClick={toggleDarkMode}
               className={`w-9 h-5 flex items-center rounded-full p-0.5 transition-colors ${
-                highContrast ? 'bg-edu-700 justify-end' : 'bg-slate-200 justify-start'
+                darkMode ? 'bg-edu-600 justify-end' : 'bg-slate-200 justify-start'
               }`}
             >
               <span className="w-4 h-4 rounded-full bg-white shadow-2xs block" />
