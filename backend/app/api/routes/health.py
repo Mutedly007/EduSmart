@@ -40,7 +40,13 @@ async def get_app_info() -> AppInfoResponse:
 async def check_health() -> HealthResponse:
     """Return backend operational status and truthful status of subsystems."""
     # Check whether the ontology file exists on disk
-    ontology_present = os.path.exists(settings.ONTOLOGY_FILE_PATH)
+    backend_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    target_path = (
+        settings.ONTOLOGY_FILE_PATH
+        if os.path.isabs(settings.ONTOLOGY_FILE_PATH)
+        else os.path.join(backend_root, settings.ONTOLOGY_FILE_PATH)
+    )
+    ontology_present = os.path.exists(target_path)
     ontology_status = (
         "ready_for_ingestion"
         if ontology_present
@@ -51,6 +57,16 @@ async def check_health() -> HealthResponse:
         if ontology_present
         else f"No ontology file at '{settings.ONTOLOGY_FILE_PATH}'. Expected to be created/validated in Protégé."
     )
+
+    # Check live Fuseki connection
+    from app.services.sparql_service import sparql_service
+    fuseki_online, fuseki_msg, fuseki_triples = await sparql_service.check_connection()
+    if fuseki_online:
+        fuseki_status = "online"
+        fuseki_details = f"Connected to Apache Jena Fuseki dataset '{settings.FUSEKI_DATASET}' ({fuseki_triples} triples ingested)."
+    else:
+        fuseki_status = "offline"
+        fuseki_details = f"Fuseki not responding at {settings.FUSEKI_QUERY_ENDPOINT}. Reason: {fuseki_msg}"
 
     return HealthResponse(
         status="healthy",
@@ -64,11 +80,8 @@ async def check_health() -> HealthResponse:
             ),
             "fuseki_sparql": ServiceStatus(
                 name="Apache Jena Fuseki",
-                status="standby",
-                details=(
-                    f"Configured endpoint: {settings.FUSEKI_QUERY_ENDPOINT}. "
-                    "Connection standby in Phase 1 (no active dataset queries executed)."
-                ),
+                status=fuseki_status,
+                details=fuseki_details,
             ),
             "semantic_graph": ServiceStatus(
                 name="RDFLib Knowledge Graph",

@@ -42,8 +42,8 @@ class Settings(BaseSettings):
     FUSEKI_UPDATE_ENDPOINT: str = "http://localhost:3030/edusmart/update"
 
     # Semantic Web & Ontology configuration
-    ONTOLOGY_FILE_PATH: str = "./ontology/edusmart.owl"
-    ONTOLOGY_DEFAULT_GRAPH_URI: str = "http://edusmart.org/ontology#"
+    ONTOLOGY_FILE_PATH: str = "./ontology/EduSmart_5Niveaux_Toutes_Branches_Corrige.rdf"
+    ONTOLOGY_DEFAULT_GRAPH_URI: str = "http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#"
 
     # spaCy NLP configuration (Placeholders for Phase 2+)
     SPACY_MODEL: str = "en_core_web_sm"
