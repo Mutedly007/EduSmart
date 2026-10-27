@@ -8,27 +8,19 @@ import {
   Layers,
 } from 'lucide-react';
 import { StatusDot } from '../ui/StatusDot';
+import { LanguageSelector } from '../ui/LanguageSelector';
 import { useBackendHealth } from '../../hooks/useBackendHealth';
-
-const routeTitleMap: Record<string, { title: string; subtitle: string }> = {
-  '/': { title: 'Dashboard', subtitle: 'Platform overview and subsystem status' },
-  '/personnes': { title: 'Personnes', subtitle: 'Gestion des individus RDF et requêtes SPARQL CRUD' },
-  '/competences': { title: 'Compétences', subtitle: 'Gestion de la branche Compétence (CRUD RDF & TALN)' },
-  '/search': { title: 'Natural Language Search', subtitle: 'Question-to-SPARQL translation pipeline' },
-  '/sparql': { title: 'SPARQL Explorer', subtitle: 'Interactive query editor and results inspection' },
-  '/graph': { title: 'Knowledge Graph', subtitle: 'Semantic visualization of courses, competencies, and relations' },
-  '/data': { title: 'Data Management', subtitle: 'RDF/OWL triplestore administration and dataset synchronization' },
-  '/ontology': { title: 'Ontology Overview', subtitle: 'Protégé class hierarchy, properties, and validation reports' },
-  '/settings': { title: 'Settings', subtitle: 'Environment endpoints, model configurations, and parameters' },
-};
+import { useTranslation } from '../../i18n/LanguageContext';
 
 export const TopBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t, isRtl } = useTranslation();
   const [globalQuery, setGlobalQuery] = useState('');
-  const currentRoute = routeTitleMap[location.pathname] || {
+
+  const currentRoute = t.topbar.routes[location.pathname] || {
     title: 'EduSmart',
-    subtitle: 'Semantic Web Knowledge Platform',
+    subtitle: t.nav.platform,
   };
 
   const { health, isLoading, isError, refetch } = useBackendHealth(20000);
@@ -62,14 +54,16 @@ export const TopBar: React.FC = () => {
       <div className="flex items-center gap-3">
         {/* Global Search Form */}
         <form onSubmit={handleGlobalSearch} className="relative hidden lg:block w-72">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className={`w-4 h-4 absolute top-1/2 -translate-y-1/2 text-slate-400 ${isRtl ? 'right-3' : 'left-3'}`} />
           <input
             type="text"
             value={globalQuery}
             onChange={(e) => setGlobalQuery(e.target.value)}
-            placeholder="Search classes, entities (e.g. ESPRIT)..."
+            placeholder={t.topbar.searchPlaceholder}
             aria-label="Global natural language and entity search"
-            className="w-full pl-9 pr-4 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all"
+            className={`w-full py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all ${
+              isRtl ? 'pr-9 pl-4' : 'pl-9 pr-4'
+            }`}
           />
         </form>
 
@@ -78,16 +72,16 @@ export const TopBar: React.FC = () => {
           className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
           title={
             isLoading
-              ? 'Checking backend...'
+              ? t.common.loading
               : isError
-              ? 'FastAPI Backend is offline or unreachable'
+              ? 'FastAPI Backend offline'
               : `FastAPI online (v${health?.version})`
           }
         >
           <Server className="w-3.5 h-3.5 text-slate-500" />
           <span className="text-slate-600 font-medium hidden sm:inline">Backend:</span>
           {isLoading ? (
-            <span className="text-slate-400 text-[11px]">Checking...</span>
+            <span className="text-slate-400 text-[11px]">{t.common.loading}</span>
           ) : isError ? (
             <StatusDot status="offline" label="Offline" />
           ) : (
@@ -106,7 +100,7 @@ export const TopBar: React.FC = () => {
         {/* Status: Fuseki Live Indicator */}
         <div
           className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs"
-          title={health?.services?.apache_jena_fuseki?.details || 'Apache Jena Fuseki SPARQL Endpoint'}
+          title={isFusekiOnline ? t.topbar.fusekiOnline : t.topbar.fusekiStandby}
         >
           <Layers className="w-3.5 h-3.5 text-slate-500" />
           <span className="text-slate-600 font-medium">Fuseki:</span>
@@ -117,28 +111,32 @@ export const TopBar: React.FC = () => {
           )}
         </div>
 
-        {/* Notification Icon Placeholder (Inactive) */}
+        {/* Language & Accessibility Selector */}
+        <LanguageSelector />
+
+        {/* Notification Icon */}
         <button
           type="button"
           disabled
-          aria-label="Notifications (inactive)"
-          title="Notifications placeholder (not configured in Phase 1)"
+          aria-label="Notifications"
+          title="Notifications placeholder"
           className="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 cursor-not-allowed bg-slate-50"
         >
           <Bell className="w-4 h-4" />
         </button>
 
-        {/* Profile / Avatar Placeholder */}
+        {/* Profile Avatar */}
         <div
-          className="flex items-center gap-2 pl-2 border-l border-slate-200 select-none"
-          title="Academic Researcher profile placeholder (Authentication not configured)"
+          className={`flex items-center gap-2 border-slate-200 select-none ${
+            isRtl ? 'pr-2 border-r' : 'pl-2 border-l'
+          }`}
         >
           <div className="w-8 h-8 rounded-full bg-edu-100 text-edu-700 border border-edu-200 flex items-center justify-center font-semibold text-xs">
             ES
           </div>
-          <div className="hidden xl:block text-left">
+          <div className="hidden xl:block text-start">
             <div className="text-xs font-semibold text-slate-800 leading-tight">Academic User</div>
-            <div className="text-[10px] text-slate-500 leading-tight">Web Semantics Team</div>
+            <div className="text-[10px] text-slate-500 leading-tight">Web Semantics</div>
           </div>
         </div>
       </div>

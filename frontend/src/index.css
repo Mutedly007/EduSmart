@@ -10,6 +10,21 @@
     background-color: #f8fafc;
   }
 
+  html[dir="rtl"], body[dir="rtl"], [dir="rtl"] {
+    font-family: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Accessibility Scaling & Contrast */
+  html.font-large {
+    font-size: 110%;
+  }
+  html.font-xlarge {
+    font-size: 120%;
+  }
+  html.high-contrast {
+    filter: contrast(120%);
+  }
+
   /* Custom subtle scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
