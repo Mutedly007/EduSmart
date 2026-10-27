@@ -129,3 +129,39 @@ export interface SampleQuestion {
   question: string;
   description: string;
 }
+
+export interface PersonneItem {
+  id: string;
+  uri: string;
+  label: string;
+  class_name: string;
+  email?: string | null;
+  telephone?: string | null;
+  grade?: string | null;
+  specialite?: string | null;
+  statut?: string | null;
+}
+
+export interface PersonneCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  email?: string;
+  telephone?: string;
+  grade?: string;
+  specialite?: string;
+}
+
+export interface PersonneClassItem {
+  class_name: string;
+  label: string;
+}
+
+export interface PersonneCommandResponse {
+  success: boolean;
+  action: string;
+  message: string;
+  sparql?: string | null;
+  affected_id?: string | null;
+  records?: Record<string, any>[] | null;
+}

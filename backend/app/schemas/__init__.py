@@ -19,6 +19,14 @@ from .nlp import (
     ExtractedEntity,
     SampleQuestion,
 )
+from .personne import (
+    PersonneItem,
+    PersonneCreate,
+    PersonneUpdate,
+    PersonneClassItem,
+    PersonneCommandRequest,
+    PersonneCommandResponse,
+)
 
 __all__ = [
     "AppInfoResponse",

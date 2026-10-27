@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout';
 import { DashboardPage } from './pages/DashboardPage';
+import { PersonnesPage } from './pages/PersonnesPage';
 import { NLSearchPage } from './pages/NLSearchPage';
 import { SPARQLExplorerPage } from './pages/SPARQLExplorerPage';
 import { KnowledgeGraphPage } from './pages/KnowledgeGraphPage';
@@ -15,6 +16,7 @@ export const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<DashboardPage />} />
+          <Route path="personnes" element={<PersonnesPage />} />
           <Route path="search" element={<NLSearchPage />} />
           <Route path="sparql" element={<SPARQLExplorerPage />} />
           <Route path="graph" element={<KnowledgeGraphPage />} />

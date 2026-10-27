@@ -13,6 +13,10 @@ import type {
   NlpQueryResponse,
   SampleQuestion,
   SparqlQueryResponse,
+  PersonneItem,
+  PersonneCreate,
+  PersonneClassItem,
+  PersonneCommandResponse,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -111,6 +115,46 @@ class ApiClient {
   async getSampleQuestions(lang?: string): Promise<SampleQuestion[]> {
     const queryParam = lang ? `?lang=${encodeURIComponent(lang)}` : '';
     return this.request<SampleQuestion[]>(`/api/nlp/sample-questions${queryParam}`);
+  }
+
+  // --- Personnes CRUD & TALN ---
+  async getPersonnes(params?: { name?: string; class_name?: string }): Promise<PersonneItem[]> {
+    const query = new URLSearchParams();
+    if (params?.name) query.set('name', params.name);
+    if (params?.class_name) query.set('class_name', params.class_name);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    return this.request<PersonneItem[]>(`/api/personnes${qs}`);
+  }
+
+  async getPersonneClasses(): Promise<PersonneClassItem[]> {
+    return this.request<PersonneClassItem[]>('/api/personnes/classes');
+  }
+
+  async createPersonne(data: PersonneCreate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>('/api/personnes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updatePersonne(id: string, data: Partial<PersonneCreate>): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/personnes/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deletePersonne(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/personnes/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async executePersonneChat(command: string): Promise<PersonneCommandResponse> {
+    return this.request<PersonneCommandResponse>('/api/personnes/chat', {
+      method: 'POST',
+      body: JSON.stringify({ command }),
+    });
   }
 
   getBaseUrl(): string {

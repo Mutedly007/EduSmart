@@ -136,6 +136,67 @@ class SparqlService:
                 "error": str(rdflib_err),
             }
 
+    async def execute_update(self, update_query: str) -> Dict[str, Any]:
+        """Execute a SPARQL 1.1 Update query against Apache Jena Fuseki with RDFLib fallback.
+
+        Args:
+            update_query: The SPARQL UPDATE string (INSERT DATA, DELETE DATA, DELETE/INSERT).
+
+        Returns:
+            Dict containing success, message, source, execution_time_ms, and error.
+        """
+        t0 = time.perf_counter()
+        update_endpoint = settings.FUSEKI_UPDATE_ENDPOINT
+
+        # 1. Try Fuseki update endpoint
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(
+                    update_endpoint,
+                    data={"update": update_query},
+                    headers={"Accept": "application/json, text/plain, */*"},
+                )
+                if resp.status_code in (200, 204):
+                    exec_time = (time.perf_counter() - t0) * 1000.0
+                    # Keep local graph in sync if initialized
+                    if self._rdflib_graph is not None:
+                        try:
+                            self._rdflib_graph.update(update_query)
+                        except Exception:
+                            pass
+                    return {
+                        "success": True,
+                        "message": "Requête SPARQL Update exécutée avec succès dans Fuseki.",
+                        "source": "fuseki",
+                        "execution_time_ms": round(exec_time, 2),
+                        "error": None,
+                    }
+                logger.warning("Fuseki update returned status %s: %s", resp.status_code, resp.text)
+        except Exception as e:
+            logger.warning("Failed to execute update on Fuseki: %s", e)
+
+        # 2. Fallback to local RDFLib in-memory graph
+        try:
+            g = self._get_local_graph()
+            g.update(update_query)
+            exec_time = (time.perf_counter() - t0) * 1000.0
+            return {
+                "success": True,
+                "message": "Requête SPARQL Update exécutée sur le graphe RDFLib local (fallback).",
+                "source": "rdflib_fallback",
+                "execution_time_ms": round(exec_time, 2),
+                "error": None,
+            }
+        except Exception as e:
+            exec_time = (time.perf_counter() - t0) * 1000.0
+            return {
+                "success": False,
+                "message": f"Échec de la mise à jour SPARQL: {str(e)}",
+                "source": "failed",
+                "execution_time_ms": round(exec_time, 2),
+                "error": str(e),
+            }
+
     def _flatten_results(self, raw_sparql_json: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Flatten standard SPARQL JSON results bindings into plain dictionary records."""
         records = []

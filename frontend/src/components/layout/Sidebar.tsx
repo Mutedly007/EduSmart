@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Users,
   Search,
   Terminal,
   Share2,
@@ -23,6 +24,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       label: 'Dashboard',
       icon: LayoutDashboard,
       description: 'System overview & status',
+    },
+    {
+      to: '/personnes',
+      label: 'Personnes',
+      icon: Users,
+      description: 'Gestion des individus (CRUD)',
+      badge: 'CRUD',
     },
     {
       to: '/search',
@@ -113,9 +121,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
                           isActive ? 'text-edu-600' : 'text-slate-400 group-hover:text-slate-600'
                         }`}
                       />
-                      <div className="truncate">
+                      <div className="truncate flex-1">
                         <div className="leading-tight">{item.label}</div>
                       </div>
+                      {item.badge && (
+                        <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
+                          {item.badge}
+                        </span>
+                      )}
                     </>
                   )}
                 </NavLink>

@@ -12,6 +12,7 @@ import { useBackendHealth } from '../../hooks/useBackendHealth';
 
 const routeTitleMap: Record<string, { title: string; subtitle: string }> = {
   '/': { title: 'Dashboard', subtitle: 'Platform overview and subsystem status' },
+  '/personnes': { title: 'Personnes', subtitle: 'Gestion des individus RDF et requêtes SPARQL CRUD' },
   '/search': { title: 'Natural Language Search', subtitle: 'Question-to-SPARQL translation pipeline' },
   '/sparql': { title: 'SPARQL Explorer', subtitle: 'Interactive query editor and results inspection' },
   '/graph': { title: 'Knowledge Graph', subtitle: 'Semantic visualization of courses, competencies, and relations' },

@@ -34,6 +34,28 @@ async def execute_sparql(request: SparqlQueryRequest) -> SparqlQueryResponse:
     )
 
 
+@router.post(
+    "/update",
+    summary="Execute arbitrary SPARQL 1.1 update",
+    description="Executes a SPARQL 1.1 Update (INSERT/DELETE) against Apache Jena Fuseki with fallback to RDFLib.",
+)
+async def execute_sparql_update(request: SparqlQueryRequest) -> dict:
+    """Execute SPARQL update query and return operation status."""
+    if not request.query or not request.query.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="SPARQL update query cannot be empty.",
+        )
+
+    res = await sparql_service.execute_update(request.query)
+    if not res.get("success"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=res.get("error") or res.get("message"),
+        )
+    return res
+
+
 @router.get(
     "/stats",
     response_model=GraphStatsResponse,
