@@ -17,6 +17,10 @@ import type {
   PersonneCreate,
   PersonneClassItem,
   PersonneCommandResponse,
+  CompetenceItem,
+  CompetenceCreate,
+  CompetenceClassItem,
+  CompetenceCommandResponse,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -152,6 +156,53 @@ class ApiClient {
 
   async executePersonneChat(command: string): Promise<PersonneCommandResponse> {
     return this.request<PersonneCommandResponse>('/api/personnes/chat', {
+      method: 'POST',
+      body: JSON.stringify({ command }),
+    });
+  }
+
+  // --- Compétences CRUD & TALN ---
+  async getCompetences(params?: {
+    name?: string;
+    class_name?: string;
+    niveau?: string;
+    category?: string;
+  }): Promise<CompetenceItem[]> {
+    const query = new URLSearchParams();
+    if (params?.name) query.set('name', params.name);
+    if (params?.class_name) query.set('class_name', params.class_name);
+    if (params?.niveau) query.set('niveau', params.niveau);
+    if (params?.category) query.set('category', params.category);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    return this.request<CompetenceItem[]>(`/api/competences${qs}`);
+  }
+
+  async getCompetenceClasses(): Promise<CompetenceClassItem[]> {
+    return this.request<CompetenceClassItem[]>('/api/competences/classes');
+  }
+
+  async createCompetence(data: CompetenceCreate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>('/api/competences', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateCompetence(id: string, data: Partial<CompetenceCreate>): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/competences/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteCompetence(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/competences/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async executeCompetenceChat(command: string): Promise<CompetenceCommandResponse> {
+    return this.request<CompetenceCommandResponse>('/api/competences/chat', {
       method: 'POST',
       body: JSON.stringify({ command }),
     });

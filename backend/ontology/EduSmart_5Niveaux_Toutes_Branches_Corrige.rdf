@@ -25,9 +25,9 @@
     
 
 
-    <!-- http://www.w3.org/2001/XMLSchema#dateTime -->
+    <!-- http://www.w3.org/2001/XMLSchema#date -->
 
-    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
     
 
 
@@ -228,7 +228,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#dateDebut">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Formation"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
         <rdfs:label>date de début</rdfs:label>
     </owl:DatatypeProperty>
     
@@ -238,7 +238,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#dateEvaluation">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Évaluation"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
         <rdfs:label>date d&apos;évaluation</rdfs:label>
     </owl:DatatypeProperty>
     
@@ -248,7 +248,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#dateFin">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Formation"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
         <rdfs:label>date de fin</rdfs:label>
     </owl:DatatypeProperty>
     
@@ -258,7 +258,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#dateNaissance">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Personnes"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
         <rdfs:label>date de naissance</rdfs:label>
     </owl:DatatypeProperty>
     
@@ -386,7 +386,7 @@
 
     <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#siteWeb">
         <rdfs:domain rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Établissement"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
         <rdfs:label>site web</rdfs:label>
     </owl:DatatypeProperty>
     
@@ -3058,7 +3058,7 @@
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Examen_Final">
         <rdf:type rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Examen"/>
         <évalue rdf:resource="http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#Programmation_Individu"/>
-        <dateEvaluation rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-06-15T00:00:00Z</dateEvaluation>
+        <dateEvaluation rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-06-15</dateEvaluation>
         <nom>Examen Final Java</nom>
         <score rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">15.5</score>
     </owl:NamedIndividual>
