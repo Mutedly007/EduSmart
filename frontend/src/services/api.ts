@@ -380,6 +380,33 @@ class ApiClient {
     });
   }
 
+  async addFormationToEtablissement(establishmentId: string, formationId: string): Promise<{ success: boolean; message: string; sparql: string }> {
+    return this.request<{ success: boolean; message: string; sparql: string }>(`/api/etablissements/${encodeURIComponent(establishmentId)}/formations`, {
+      method: 'POST',
+      body: JSON.stringify({ formation_id: formationId }),
+    });
+  }
+
+  async removeFormationFromEtablissement(establishmentId: string, formationId: string): Promise<{ success: boolean; message: string; sparql: string }> {
+    return this.request<{ success: boolean; message: string; sparql: string }>(`/api/etablissements/${encodeURIComponent(establishmentId)}/formations/${encodeURIComponent(formationId)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async addTeacherToEtablissement(establishmentId: string, teacherId: string): Promise<{ success: boolean; message: string; sparql: string }> {
+    return this.request<{ success: boolean; message: string; sparql: string }>(`/api/etablissements/${encodeURIComponent(establishmentId)}/teachers`, {
+      method: 'POST',
+      body: JSON.stringify({ teacher_id: teacherId }),
+    });
+  }
+
+  async removeTeacherFromEtablissement(establishmentId: string, teacherId: string): Promise<{ success: boolean; message: string; sparql: string }> {
+    return this.request<{ success: boolean; message: string; sparql: string }>(`/api/etablissements/${encodeURIComponent(establishmentId)}/teachers/${encodeURIComponent(teacherId)}`, {
+      method: 'DELETE',
+    });
+  }
+
+
 
   getBaseUrl(): string {
     return this.baseUrl;

@@ -12,6 +12,8 @@ from app.schemas.etablissement import (
     EtablissementItem,
     EtablissementUpdate,
     EtablissementAddStudent,
+    EtablissementAddFormation,
+    EtablissementAddTeacher,
 )
 from app.services.etablissement_service import etablissement_service
 
@@ -194,6 +196,91 @@ async def remove_student_from_establishment(establishment_id: str, student_id: s
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors du retrait de l'étudiant: {str(e)}",
         )
+
+
+@router.post("/{establishment_id}/formations", summary="Link an existing formation to an establishment")
+async def add_formation_to_establishment(establishment_id: str, data: EtablissementAddFormation):
+    """Link an existing formation to this establishment via SPARQL 1.1 INSERT DATA (edu:organise)."""
+    try:
+        result = await etablissement_service.add_formation(establishment_id, data.formation_id)
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("error") or "Échec du rattachement de la formation",
+            )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Error adding formation %s to establishment %s: %s", data.formation_id, establishment_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors du rattachement de la formation: {str(e)}",
+        )
+
+
+@router.delete("/{establishment_id}/formations/{formation_id}", summary="Remove a formation from an establishment")
+async def remove_formation_from_establishment(establishment_id: str, formation_id: str):
+    """Remove a formation link from this establishment via SPARQL 1.1 DELETE DATA."""
+    try:
+        result = await etablissement_service.remove_formation(establishment_id, formation_id)
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("error") or "Échec du retrait de la formation",
+            )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Error removing formation %s from establishment %s: %s", formation_id, establishment_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors du retrait de la formation: {str(e)}",
+        )
+
+
+@router.post("/{establishment_id}/teachers", summary="Affiliate an existing teacher to an establishment")
+async def add_teacher_to_establishment(establishment_id: str, data: EtablissementAddTeacher):
+    """Affiliate an existing teacher to this establishment via SPARQL 1.1 INSERT DATA (edu:appartientA)."""
+    try:
+        result = await etablissement_service.add_teacher(establishment_id, data.teacher_id)
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("error") or "Échec de l'affiliation de l'enseignant",
+            )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Error adding teacher %s to establishment %s: %s", data.teacher_id, establishment_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors de l'affiliation de l'enseignant: {str(e)}",
+        )
+
+
+@router.delete("/{establishment_id}/teachers/{teacher_id}", summary="Remove a teacher from an establishment")
+async def remove_teacher_from_establishment(establishment_id: str, teacher_id: str):
+    """Remove a teacher link from this establishment via SPARQL 1.1 DELETE DATA."""
+    try:
+        result = await etablissement_service.remove_teacher(establishment_id, teacher_id)
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("error") or "Échec du retrait de l'enseignant",
+            )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Error removing teacher %s from establishment %s: %s", teacher_id, establishment_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors du retrait de l'enseignant: {str(e)}",
+        )
+
 
 
 
