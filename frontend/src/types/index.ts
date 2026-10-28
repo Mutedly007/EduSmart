@@ -206,6 +206,7 @@ export interface CompetenceCommandResponse {
 }
 
 export interface ApprentissageItem {
+export interface FormationItem {
   id: string;
   uri: string;
   label: string;
@@ -234,6 +235,108 @@ export interface ApprentissageCreate {
 }
 
 export interface ApprentissageClassItem {
+  description?: string | null;
+  duration?: number | string | null;
+  objective?: string | null;
+  price?: number | string | null;
+  domain?: string | null;
+  modality?: string | null;
+}
+
+export interface FormationCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  description?: string;
+  duration?: number;
+  objective?: string;
+  price?: number;
+  domain?: string;
+  modality?: string;
+}
+
+export interface FormationUpdate {
+  label?: string;
+  class_name?: string;
+  description?: string | null;
+  duration?: number | null;
+  objective?: string | null;
+  price?: number | null;
+  domain?: string | null;
+  modality?: string | null;
+}
+
+export interface FormationClassItem {
+  class_name: string;
+  label: string;
+}
+
+export interface FormationCommandResponse {
+  success: boolean;
+  action: string;
+  message: string;
+  sparql?: string | null;
+  affected_id?: string | null;
+  records?: FormationItem[] | null;
+}
+
+export interface EtablissementRelationItem {
+  id: string;
+  uri: string;
+  label: string;
+  type_name?: string | null;
+}
+
+export interface EtablissementItem {
+  id: string;
+  uri: string;
+  label: string;
+  class_name: string;
+  ville?: string | null;
+  adresse?: string | null;
+  site_web?: string | null;
+  telephone?: string | null;
+  email?: string | null;
+  statut?: string | null;
+  description?: string | null;
+  mode_enseignement?: string | null;
+  domaine?: string | null;
+  formations_organisees: EtablissementRelationItem[];
+  programmes_proposes: EtablissementRelationItem[];
+  etudiants_inscrits: EtablissementRelationItem[];
+  enseignants_affilies: EtablissementRelationItem[];
+}
+
+export interface EtablissementCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  ville?: string;
+  adresse?: string;
+  site_web?: string;
+  telephone?: string;
+  email?: string;
+  statut?: string;
+  description?: string;
+  mode_enseignement?: string;
+  domaine?: string;
+}
+
+export interface EtablissementUpdate {
+  label?: string;
+  class_name?: string;
+  ville?: string;
+  adresse?: string;
+  site_web?: string;
+  telephone?: string;
+  email?: string;
+  statut?: string;
+  description?: string;
+  mode_enseignement?: string;
+  domaine?: string;
+}
+
+export interface EtablissementClassItem {
   class_name: string;
   label: string;
   category?: string | null;
@@ -241,6 +344,7 @@ export interface ApprentissageClassItem {
 }
 
 export interface ApprentissageCommandResponse {
+export interface EtablissementCommandResponse {
   success: boolean;
   action: string;
   message: string;

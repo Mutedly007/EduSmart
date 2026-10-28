@@ -42,6 +42,14 @@ from .apprentissage import (
     ApprentissageClassItem,
     ApprentissageCommandRequest,
     ApprentissageCommandResponse,
+from .etablissement import (
+    EtablissementItem,
+    EtablissementCreate,
+    EtablissementUpdate,
+    EtablissementClassItem,
+    EtablissementCommandRequest,
+    EtablissementCommandResponse,
+    EtablissementRelationItem,
 )
 
 __all__ = [
@@ -78,4 +86,11 @@ __all__ = [
     "ApprentissageClassItem",
     "ApprentissageCommandRequest",
     "ApprentissageCommandResponse",
+    "EtablissementItem",
+    "EtablissementCreate",
+    "EtablissementUpdate",
+    "EtablissementClassItem",
+    "EtablissementCommandRequest",
+    "EtablissementCommandResponse",
+    "EtablissementRelationItem",
 ]
