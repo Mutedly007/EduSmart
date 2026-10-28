@@ -616,9 +616,10 @@ SELECT DISTINCT ?enseignant ?nom ?grade ?email ?specialite ?identifiant WHERE {{
 
             clauses_str = "\n".join(filter_clauses)
             query = f"""{PREFIXES}
-SELECT DISTINCT ?etablissement ?nom ?ville ?adresse ?siteWeb ?statut WHERE {{
+SELECT DISTINCT ?etablissement ?nom ?ville ?adresse ?siteWeb ?statut ?type WHERE {{
     ?etablissement a ?type .
-    FILTER(?type IN (edu:Université_Privée, edu:Établissement, edu:Université))
+    ?type rdfs:subClassOf* ?root .
+    FILTER(CONTAINS(STR(?root), "tablissement") && ?type != owl:NamedIndividual)
     OPTIONAL {{ ?etablissement edu:nom ?nom }}
 {clauses_str}
     OPTIONAL {{ ?etablissement edu:adresse ?adresse }}
@@ -627,7 +628,7 @@ SELECT DISTINCT ?etablissement ?nom ?ville ?adresse ?siteWeb ?statut WHERE {{
             if expl_filters:
                 explanation = f"Recherche d'établissements filtrée par: {', '.join(expl_filters)}."
             else:
-                explanation = "Recherche de tous les établissements universitaires et centres de formation."
+                explanation = "Recherche de tous les établissements universitaires, écoles et instituts enregistrés."
             return query, explanation
 
         elif intent == "LIST_COURSES":

@@ -18,8 +18,12 @@ import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { api } from '../services/api';
 import type { PersonneItem, PersonneClassItem, PersonneCreate } from '../types';
+import { useLanguage, useTranslation } from '../i18n/LanguageContext';
 
 export const PersonnesPage: React.FC = () => {
+  const { t } = useTranslation();
+  const { isRtl } = useLanguage();
+
   // Data states
   const [personnes, setPersonnes] = useState<PersonneItem[]>([]);
   const [classes, setClasses] = useState<PersonneClassItem[]>([]);
@@ -252,11 +256,11 @@ export const PersonnesPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold mb-1 border border-purple-200">
-            <Users className="w-3.5 h-3.5" /> Branche Ontologique 4 — Personnes
+            <Users className="w-3.5 h-3.5" /> {t.personnes.pageBadge}
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Personnes</h1>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{t.personnes.pageTitle}</h1>
           <p className="text-sm text-slate-500 mt-0.5 max-w-2xl">
-            Individus RDF de cette classe ou de l'une de ses sous-classes (Enseignants, Étudiants, Personnel Administratif...).
+            {t.personnes.pageSubtitle}
           </p>
         </div>
 
@@ -265,14 +269,14 @@ export const PersonnesPage: React.FC = () => {
           className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98] self-start sm:self-auto"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Nouvel individu</span>
+          <span>+ {t.personnes.newPersonne}</span>
         </button>
       </div>
 
       {/* 2. Natural Language Text Chat / Command Bar */}
       <Card
-        title="Assistant TALN Personnes"
-        subtitle="Exécutez des commandes CRUD en langage naturel (français ou anglais)"
+        title={t.personnes.talnTitle}
+        subtitle={t.personnes.talnSubtitle}
         icon={<Sparkles className="w-4 h-4 text-edu-600" />}
       >
         <form onSubmit={handleChatSubmit} className="space-y-2">
@@ -282,7 +286,7 @@ export const PersonnesPage: React.FC = () => {
                 type="text"
                 value={chatCommand}
                 onChange={(e) => setChatCommand(e.target.value)}
-                placeholder="Tapez une commande (ex: 'Créer un étudiant...', 'Modifier l\'email de Ali à ali@esprit.tn', 'Supprimer...')..."
+                placeholder={t.personnes.talnPlaceholder}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-edu-500 focus:bg-white transition-all"
               />
             </div>
@@ -292,19 +296,19 @@ export const PersonnesPage: React.FC = () => {
               className="px-4 py-2.5 bg-edu-600 hover:bg-edu-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-xs"
             >
               <Sparkles className={`w-3.5 h-3.5 ${isChatExecuting ? 'animate-spin' : ''}`} />
-              <span>{isChatExecuting ? 'Traitement...' : 'Exécuter'}</span>
+              <span>{isChatExecuting ? t.competences.executing : t.personnes.execute}</span>
             </button>
           </div>
 
           {/* Quick example chips */}
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            <span className="text-[11px] text-slate-400">Exemples rapides :</span>
+            <span className="text-[11px] text-slate-400">{t.personnes.examplesLabel}</span>
             {[
-              'Créer un étudiant nommé Yassine Ben Ali',
-              'Modifier l\'email de Ali à ali@esprit.tn',
-              'Modifier le grade de Ali en Professeur Titulaire',
-              'Supprimer l\'étudiant Yassine',
-              'Lister les enseignants',
+              isRtl ? 'إنشاء طالب باسم ياسين بن علي' : 'Créer un étudiant nommé Yassine Ben Ali',
+              isRtl ? 'تعديل البريد الإلكتروني لعلي إلى ali@esprit.tn' : 'Modifier l\'email de Ali à ali@esprit.tn',
+              isRtl ? 'تعديل رتبة علي إلى أستاذ تعليم عالي' : 'Modifier le grade de Ali en Professeur Titulaire',
+              isRtl ? 'حذف الطالب ياسين' : 'Supprimer l\'étudiant Yassine',
+              isRtl ? 'استعراض الأساتذة' : 'Lister les enseignants',
             ].map((chip, idx) => (
               <button
                 key={idx}
@@ -347,7 +351,7 @@ export const PersonnesPage: React.FC = () => {
       <div className="bg-white border border-slate-200/90 rounded-xl p-4 shadow-subtle">
         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3 items-end">
           <div className="flex-1 w-full">
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Nom / Identifiant</label>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">{t.personnes.nameField}</label>
             <input
               type="text"
               value={searchNom}
@@ -358,13 +362,13 @@ export const PersonnesPage: React.FC = () => {
           </div>
 
           <div className="w-full md:w-64">
-            <label className="block text-xs font-semibold text-slate-600 mb-1">Classe</label>
+            <label className="block text-xs font-semibold text-slate-600 mb-1">{t.personnes.classField}</label>
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-edu-500 font-medium"
             >
-              <option value="Tous">-- Toutes les classes --</option>
+              <option value="Tous">{t.personnes.allClasses}</option>
               {classes.map((c) => (
                 <option key={c.class_name} value={c.class_name}>
                   {c.label || c.class_name}
@@ -378,14 +382,14 @@ export const PersonnesPage: React.FC = () => {
               type="submit"
               className="flex-1 md:flex-initial px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
             >
-              <Search className="w-3.5 h-3.5" /> Rechercher
+              <Search className="w-3.5 h-3.5" /> {t.common.search}
             </button>
             <button
               type="button"
               onClick={handleResetFilters}
               className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold transition-colors"
             >
-              Réinitialiser
+              {t.common.reset}
             </button>
           </div>
         </form>
@@ -396,7 +400,7 @@ export const PersonnesPage: React.FC = () => {
         <div className="p-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Individus Répertoriés
+              {t.personnes.totalCount}
             </span>
             <Badge variant="blue" size="sm">
               {personnes.length} individus
@@ -408,7 +412,7 @@ export const PersonnesPage: React.FC = () => {
             className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1 transition-colors"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span>Actualiser</span>
+            <span>{t.common.refresh}</span>
           </button>
         </div>
 
@@ -420,14 +424,14 @@ export const PersonnesPage: React.FC = () => {
         )}
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-start text-xs">
             <thead>
               <tr className="bg-slate-50/70 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
                 <th className="py-3 px-4">Individu (ID / URI)</th>
-                <th className="py-3 px-4">Classe (Type)</th>
-                <th className="py-3 px-4">Nom / Label</th>
+                <th className="py-3 px-4">{t.personnes.classField}</th>
+                <th className="py-3 px-4">{t.personnes.nameField}</th>
                 <th className="py-3 px-4">Coordonnées</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3 px-4 text-end">{t.common.actions}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -435,16 +439,16 @@ export const PersonnesPage: React.FC = () => {
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-slate-400">
                     <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-edu-600" />
-                    Chargement des individus depuis Apache Jena Fuseki...
+                    {t.common.loading}
                   </td>
                 </tr>
               ) : personnes.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-8 text-center text-slate-400">
                     <Users className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                    <p className="font-semibold text-slate-600">Aucun individu trouvé</p>
+                    <p className="font-semibold text-slate-600">{t.personnes.emptyTitle}</p>
                     <p className="text-[11px] text-slate-400 mt-0.5">
-                      Créez-en un via le bouton "+ Nouvel individu" ou la commande TALN ci-dessus.
+                      {t.personnes.emptyDesc}
                     </p>
                   </td>
                 </tr>
@@ -567,15 +571,15 @@ export const PersonnesPage: React.FC = () => {
                 <Plus className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-slate-900">Ajouter un individu</h3>
-                <p className="text-xs text-slate-500">Insertion SPARQL 1.1 dans la classe Personnes</p>
+                <h3 className="font-bold text-base text-slate-900">{t.personnes.modalCreateTitle}</h3>
+                <p className="text-xs text-slate-500">{t.personnes.modalCreateSubtitle}</p>
               </div>
             </div>
 
             <form onSubmit={handleCreateSubmit} className="space-y-3 text-xs">
               <div>
                 <label className="block text-slate-700 font-semibold mb-1">
-                  Nom complet / Label <span className="text-rose-500">*</span>
+                  {t.personnes.nameField} <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -606,7 +610,7 @@ export const PersonnesPage: React.FC = () => {
 
                 <div>
                   <label className="block text-slate-700 font-semibold mb-1">
-                    Classe Ontologique <span className="text-rose-500">*</span>
+                    {t.personnes.classField} <span className="text-rose-500">*</span>
                   </label>
                   <select
                     value={formClass}
@@ -624,7 +628,7 @@ export const PersonnesPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Email</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.emailField}</label>
                   <input
                     type="email"
                     value={formEmail}
@@ -635,7 +639,7 @@ export const PersonnesPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Téléphone</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.phoneField}</label>
                   <input
                     type="text"
                     value={formPhone}
@@ -648,7 +652,7 @@ export const PersonnesPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Grade (si Enseignant)</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.gradeField}</label>
                   <input
                     type="text"
                     value={formGrade}
@@ -659,7 +663,7 @@ export const PersonnesPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Spécialité / Filière</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.specialiteField}</label>
                   <input
                     type="text"
                     value={formSpecialite}
@@ -676,7 +680,7 @@ export const PersonnesPage: React.FC = () => {
                   onClick={() => setIsCreateModalOpen(false)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-semibold transition-colors"
                 >
-                  Annuler
+                  {t.common.cancel}
                 </button>
                 <button
                   type="submit"
@@ -684,7 +688,7 @@ export const PersonnesPage: React.FC = () => {
                   className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Insertion...' : 'Créer l\'individu'}</span>
+                  <span>{isSubmitting ? t.common.loading : t.common.create}</span>
                 </button>
               </div>
             </form>
@@ -708,14 +712,14 @@ export const PersonnesPage: React.FC = () => {
                 <Edit2 className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-slate-900">Modifier l'individu</h3>
+                <h3 className="font-bold text-base text-slate-900">{t.personnes.modalEditTitle}</h3>
                 <p className="text-xs text-slate-500 font-mono">edu:{selectedPersonne.id}</p>
               </div>
             </div>
 
             <form onSubmit={handleEditSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Nom complet / Label</label>
+                <label className="block text-slate-700 font-semibold mb-1">{t.personnes.nameField}</label>
                 <input
                   type="text"
                   required
@@ -726,7 +730,7 @@ export const PersonnesPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Classe</label>
+                <label className="block text-slate-700 font-semibold mb-1">{t.personnes.classField}</label>
                 <select
                   value={formClass}
                   onChange={(e) => setFormClass(e.target.value)}
@@ -742,7 +746,7 @@ export const PersonnesPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Email</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.emailField}</label>
                   <input
                     type="email"
                     value={formEmail}
@@ -752,7 +756,7 @@ export const PersonnesPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Téléphone</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.phoneField}</label>
                   <input
                     type="text"
                     value={formPhone}
@@ -764,7 +768,7 @@ export const PersonnesPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Grade</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.gradeField}</label>
                   <input
                     type="text"
                     value={formGrade}
@@ -774,7 +778,7 @@ export const PersonnesPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-1">Spécialité</label>
+                  <label className="block text-slate-700 font-semibold mb-1">{t.personnes.specialiteField}</label>
                   <input
                     type="text"
                     value={formSpecialite}
@@ -790,7 +794,7 @@ export const PersonnesPage: React.FC = () => {
                   onClick={() => setIsEditModalOpen(false)}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-semibold transition-colors"
                 >
-                  Annuler
+                  {t.common.cancel}
                 </button>
                 <button
                   type="submit"
@@ -798,7 +802,7 @@ export const PersonnesPage: React.FC = () => {
                   className="px-5 py-2 bg-edu-600 hover:bg-edu-700 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
-                  <span>{isSubmitting ? 'Mise à jour...' : 'Enregistrer'}</span>
+                  <span>{isSubmitting ? t.common.loading : t.common.save}</span>
                 </button>
               </div>
             </form>
@@ -822,15 +826,14 @@ export const PersonnesPage: React.FC = () => {
                 <Trash2 className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-base text-slate-900">Supprimer cet individu ?</h3>
+                <h3 className="font-bold text-base text-slate-900">{t.personnes.modalDeleteTitle}</h3>
                 <p className="text-xs text-rose-700">Suppression permanente dans Apache Jena Fuseki</p>
               </div>
             </div>
 
             <p className="text-xs text-slate-600 leading-relaxed mb-4">
-              Êtes-vous sûr de vouloir supprimer <strong>{selectedPersonne.label}</strong> (
+              {t.personnes.modalDeleteDesc} <strong>{selectedPersonne.label}</strong> (
               <code className="font-mono text-slate-800 font-semibold">{selectedPersonne.id}</code>) ?
-              Cette action exécutera une requête SPARQL <code>DELETE WHERE</code> irréversible.
             </p>
 
             <div className="p-2.5 bg-slate-900 text-slate-300 font-mono text-[11px] rounded-lg mb-4 border border-slate-800">
@@ -843,7 +846,7 @@ export const PersonnesPage: React.FC = () => {
                 onClick={() => setIsDeleteModalOpen(false)}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-semibold transition-colors"
               >
-                Annuler
+                {t.common.cancel}
               </button>
               <button
                 type="button"
@@ -852,7 +855,7 @@ export const PersonnesPage: React.FC = () => {
                 className="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>{isSubmitting ? 'Suppression...' : 'Confirmer la suppression'}</span>
+                <span>{isSubmitting ? t.common.loading : t.common.delete}</span>
               </button>
             </div>
           </div>

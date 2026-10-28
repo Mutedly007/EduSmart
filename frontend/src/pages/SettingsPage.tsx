@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Settings,
   Server,
@@ -7,29 +6,53 @@ import {
   HardDrive,
   Lock,
   CheckCircle2,
+  Globe,
+  Eye,
+  Type,
+  Sun,
+  Moon,
+  Check,
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { StatusDot } from '../components/ui/StatusDot';
 import { useBackendHealth } from '../hooks/useBackendHealth';
+import { useLanguage } from '../i18n/LanguageContext';
+import type { Language, FontSize } from '../i18n/types';
 
 export const SettingsPage: React.FC = () => {
   const { health, isLoading, isError } = useBackendHealth();
   const isFusekiOnline = health?.services?.apache_jena_fuseki?.status === 'online';
+  const {
+    language,
+    setLanguage,
+    t,
+    fontSize,
+    setFontSize,
+    highContrast,
+    setHighContrast,
+    darkMode,
+    toggleDarkMode,
+  } = useLanguage();
+
+  const langList: { code: Language; name: string; flag: string; dir: string }[] = [
+    { code: 'fr', name: 'Français', flag: '🇫🇷', dir: 'LTR' },
+    { code: 'en', name: 'English', flag: '🇬🇧', dir: 'LTR' },
+    { code: 'ar', name: 'العربية', flag: '🇹🇳', dir: 'RTL' },
+  ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-slate-100 text-slate-800 rounded-full text-xs font-semibold mb-2 border border-slate-200">
-          <Settings className="w-3.5 h-3.5" /> Platform Configuration
+          <Settings className="w-3.5 h-3.5" /> {t.accessibility.title} & Configuration
         </div>
         <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-          System Environment Settings
+          {t.topbar.routes['/settings']?.title || 'Paramètres'}
         </h2>
         <p className="text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
-          Configuration overview for the EduSmart Semantic Web platform. Displays active backend endpoints,
-          triplestore mapping, linguistic spaCy models, and ontology storage paths.
+          {t.topbar.routes['/settings']?.subtitle || 'Configuration globale, accessibilité visuelle et multilinguisme.'}
         </p>
       </div>
 
@@ -41,6 +64,144 @@ export const SettingsPage: React.FC = () => {
           and spaCy NLP linguistic pipelines are active and responding within normal latency tolerances.
         </div>
       </div>
+
+      {/* Card: Accessibility & Multilingual Translation (NEW) */}
+      <Card
+        title={t.accessibility.title}
+        subtitle="Internationalisation (Français, English, العربية) & Ergonomie WCAG"
+        icon={<Globe className="w-5 h-5 text-edu-600" />}
+        badge={<Badge variant="blue" size="sm">3 Langues & RTL</Badge>}
+      >
+        <div className="space-y-5 text-xs">
+          {/* 1. Language Picker */}
+          <div>
+            <label className="block text-slate-700 font-semibold mb-2 flex items-center gap-1.5">
+              <Globe className="w-4 h-4 text-edu-600" />
+              {t.accessibility.language}
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {langList.map((item) => {
+                const isSelected = language === item.code;
+                return (
+                  <button
+                    key={item.code}
+                    type="button"
+                    onClick={() => setLanguage(item.code)}
+                    className={`flex items-center justify-between p-3 rounded-xl border text-xs font-medium transition-all ${
+                      isSelected
+                        ? 'border-edu-600 bg-edu-50/60 text-edu-900 font-bold ring-2 ring-edu-600/20'
+                        : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xl leading-none">{item.flag}</span>
+                      <div className="text-start">
+                        <div className="font-semibold text-slate-900">{item.name}</div>
+                        <div className="text-[10px] text-slate-400 font-mono">Direction: {item.dir}</div>
+                      </div>
+                    </div>
+                    {isSelected && <Check className="w-4 h-4 text-edu-700 flex-shrink-0" />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 2. Text Sizing Controls */}
+          <div className="pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-slate-700 font-semibold flex items-center gap-1.5">
+                <Type className="w-4 h-4 text-slate-500" />
+                {t.accessibility.textSize}
+              </label>
+              <span className="text-xs font-mono text-slate-500">
+                {fontSize === 'normal' ? '100% (Normal)' : fontSize === 'large' ? '110% (Large)' : '120% (Très Grand)'}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  { id: 'normal', label: t.accessibility.normal, scale: 'A' },
+                  { id: 'large', label: t.accessibility.large, scale: 'A+' },
+                  { id: 'xlarge', label: t.accessibility.xlarge, scale: 'A++' },
+                ] as { id: FontSize; label: string; scale: string }[]
+              ).map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setFontSize(f.id)}
+                  className={`py-2 px-3 rounded-lg border text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
+                    fontSize === f.id
+                      ? 'border-edu-600 bg-edu-700 text-white shadow-sm'
+                      : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                  }`}
+                >
+                  <span className="font-bold">{f.scale}</span>
+                  <span className="text-[11px] hidden sm:inline">{f.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. Dark Mode / Light Mode Toggle */}
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                {darkMode ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-slate-900">
+                  {darkMode ? t.accessibility.darkMode : t.accessibility.lightMode}
+                </div>
+                <div className="text-[11px] text-slate-500 max-w-md mt-0.5 leading-relaxed">
+                  {darkMode
+                    ? 'Le mode sombre est activé, réduisant la fatigue oculaire dans les environnements sombres.'
+                    : 'Le mode clair est activé avec un contraste de lecture optimal.'}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={darkMode}
+              onClick={toggleDarkMode}
+              className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${
+                darkMode ? 'bg-edu-600 justify-end' : 'bg-slate-200 justify-start'
+              }`}
+            >
+              <span className="w-4 h-4 rounded-full bg-white shadow-2xs block" />
+            </button>
+          </div>
+
+          {/* 4. High Contrast Toggle */}
+          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-lg bg-amber-50 text-amber-600">
+                <Eye className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-slate-900">{t.accessibility.highContrast}</div>
+                <div className="text-[11px] text-slate-500 max-w-md mt-0.5 leading-relaxed">
+                  {t.accessibility.highContrastDesc}
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={highContrast}
+              onClick={() => setHighContrast(!highContrast)}
+              className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors ${
+                highContrast ? 'bg-edu-700 justify-end' : 'bg-slate-200 justify-start'
+              }`}
+            >
+              <span className="w-4 h-4 rounded-full bg-white shadow-2xs block" />
+            </button>
+          </div>
+        </div>
+      </Card>
 
       {/* Settings Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
