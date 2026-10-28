@@ -6,6 +6,8 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PersonnesPage } from './pages/PersonnesPage';
 import { CompetencesPage } from './pages/CompetencesPage';
+import { FormationsPage } from './pages/FormationsPage';
+import { EtablissementsPage } from './pages/EtablissementsPage';
 import { NLSearchPage } from './pages/NLSearchPage';
 import { SPARQLExplorerPage } from './pages/SPARQLExplorerPage';
 import { KnowledgeGraphPage } from './pages/KnowledgeGraphPage';
@@ -23,21 +25,28 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Landing & Authentication Routes */}
+        {/* Routes publiques (Vitrine & Authentification) */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Protected Application Routes (Accessible ONLY after login) */}
+        {/* Routes applicatives protégées (accessibles UNIQUEMENT après connexion) */}
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/personnes" element={<PersonnesPage />} />
           <Route path="/competences" element={<CompetencesPage />} />
+          <Route path="/formations" element={<FormationsPage />} />
+          <Route path="/etablissements" element={<EtablissementsPage />} />
           <Route path="/search" element={<NLSearchPage />} />
           <Route path="/sparql" element={<SPARQLExplorerPage />} />
           <Route path="/graph" element={<KnowledgeGraphPage />} />
           <Route path="/data" element={<DataManagementPage />} />
           <Route path="/ontology" element={<OntologyOverviewPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* Redirection fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
         </Route>
 
         {/* Fallback route */}
