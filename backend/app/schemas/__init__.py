@@ -35,6 +35,13 @@ from .competence import (
     CompetenceCommandRequest,
     CompetenceCommandResponse,
 )
+from .apprentissage import (
+    ApprentissageItem,
+    ApprentissageCreate,
+    ApprentissageUpdate,
+    ApprentissageClassItem,
+    ApprentissageCommandRequest,
+    ApprentissageCommandResponse,
 from .etablissement import (
     EtablissementItem,
     EtablissementCreate,
@@ -73,6 +80,12 @@ __all__ = [
     "CompetenceClassItem",
     "CompetenceCommandRequest",
     "CompetenceCommandResponse",
+    "ApprentissageItem",
+    "ApprentissageCreate",
+    "ApprentissageUpdate",
+    "ApprentissageClassItem",
+    "ApprentissageCommandRequest",
+    "ApprentissageCommandResponse",
     "EtablissementItem",
     "EtablissementCreate",
     "EtablissementUpdate",

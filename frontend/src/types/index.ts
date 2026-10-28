@@ -205,11 +205,36 @@ export interface CompetenceCommandResponse {
   records?: Record<string, any>[] | null;
 }
 
+export interface ApprentissageItem {
 export interface FormationItem {
   id: string;
   uri: string;
   label: string;
   class_name: string;
+  category?: string | null;
+  modalite?: string | null;
+  description?: string | null;
+  score?: number | null;
+  date_evaluation?: string | null;
+  statut?: string | null;
+  evalue_competence?: string | null;
+  competence_label?: string | null;
+}
+
+export interface ApprentissageCreate {
+  id?: string;
+  label: string;
+  class_name: string;
+  category?: string;
+  modalite?: string;
+  description?: string;
+  score?: number;
+  date_evaluation?: string;
+  statut?: string;
+  evalue_competence?: string;
+}
+
+export interface ApprentissageClassItem {
   description?: string | null;
   duration?: number | string | null;
   objective?: string | null;
@@ -318,6 +343,7 @@ export interface EtablissementClassItem {
   parent?: string | null;
 }
 
+export interface ApprentissageCommandResponse {
 export interface EtablissementCommandResponse {
   success: boolean;
   action: string;

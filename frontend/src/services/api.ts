@@ -21,6 +21,10 @@ import type {
   CompetenceCreate,
   CompetenceClassItem,
   CompetenceCommandResponse,
+  ApprentissageItem,
+  ApprentissageCreate,
+  ApprentissageClassItem,
+  ApprentissageCommandResponse,
   FormationItem,
   FormationCreate,
   FormationUpdate,
@@ -218,6 +222,28 @@ class ApiClient {
     });
   }
 
+  // --- Apprentissage CRUD & TALN ---
+  async getApprentissages(params?: {
+    name?: string;
+    class_name?: string;
+    category?: string;
+    modalite?: string;
+  }): Promise<ApprentissageItem[]> {
+    const query = new URLSearchParams();
+    if (params?.name) query.set('name', params.name);
+    if (params?.class_name) query.set('class_name', params.class_name);
+    if (params?.category) query.set('category', params.category);
+    if (params?.modalite) query.set('modalite', params.modalite);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    return this.request<ApprentissageItem[]>(`/api/apprentissage${qs}`);
+  }
+
+  async getApprentissageClasses(): Promise<ApprentissageClassItem[]> {
+    return this.request<ApprentissageClassItem[]>('/api/apprentissage/classes');
+  }
+
+  async createApprentissage(data: ApprentissageCreate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>('/api/apprentissage', {
   // --- Formation CRUD & TALN ---
   async getFormations(params?: { name?: string; class_name?: string }): Promise<FormationItem[]> {
     const query = new URLSearchParams();
@@ -296,6 +322,8 @@ class ApiClient {
     });
   }
 
+  async updateApprentissage(id: string, data: Partial<ApprentissageCreate>): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/apprentissage/${encodeURIComponent(id)}`, {
   async updateEtablissement(id: string, data: EtablissementUpdate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
     return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/etablissements/${encodeURIComponent(id)}`, {
       method: 'PUT',
@@ -303,12 +331,16 @@ class ApiClient {
     });
   }
 
+  async deleteApprentissage(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/apprentissage/${encodeURIComponent(id)}`, {
   async deleteEtablissement(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
     return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/etablissements/${encodeURIComponent(id)}`, {
       method: 'DELETE',
     });
   }
 
+  async executeApprentissageChat(command: string): Promise<ApprentissageCommandResponse> {
+    return this.request<ApprentissageCommandResponse>('/api/apprentissage/chat', {
   async executeEtablissementChat(command: string): Promise<EtablissementCommandResponse> {
     return this.request<EtablissementCommandResponse>('/api/etablissements/chat', {
       method: 'POST',

@@ -40,6 +40,8 @@ export const HomePage: React.FC = () => {
       color: 'from-blue-600 to-cyan-600',
       bgColor: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
       desc: 'Modalités d’apprentissage, activités pédagogiques formelles et évaluations.',
+      badge: 'CRUD + TALN',
+      route: '/apprentissage',
     },
     {
       id: 'competence',
@@ -51,6 +53,7 @@ export const HomePage: React.FC = () => {
       bgColor: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
       desc: 'Compétences techniques, programmation, data science, langues et soft skills.',
       badge: 'CRUD + TALN',
+      route: '/competences',
     },
     {
       id: 'formation',
@@ -72,6 +75,7 @@ export const HomePage: React.FC = () => {
       bgColor: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
       desc: 'Enseignants, étudiants inscrits, tuteurs académiques et grades universitaires.',
       badge: 'CRUD + TALN',
+      route: '/personnes',
     },
     {
       id: 'etablissement',
@@ -305,7 +309,7 @@ export const HomePage: React.FC = () => {
                   </div>
 
                   <Link
-                    to={isAuthenticated ? "/dashboard" : "/login"}
+                    to={isAuthenticated ? (b.route || "/dashboard") : "/login"}
                     className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] font-bold text-edu-600 dark:text-edu-400 hover:underline flex items-center gap-1"
                   >
                     <span>{isAuthenticated ? 'Consulter' : t.home.loginBtn}</span>

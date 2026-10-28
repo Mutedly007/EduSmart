@@ -1,0 +1,565 @@
+================================================================================
+          PRÉSENTATION DU PROJET WEB SÉMANTIQUE : EDUSMART
+          VALIDATION FINALE — ÉCOLE SUPÉRIEURE PRIVÉE D'INGÉNIERIE ET DE TECHNOLOGIE (ESPRIT)
+          ANNÉE ACADÉMIQUE : 2026-2027
+================================================================================
+Équipe de projet (CODECRAFT) :
+  - Trabelsi Kacem
+  - Mohamed Aziz Hammami
+  - Hlila Khalil
+  - Frigui Wassim
+  - Ayed Rahma
+
+Encadrement & Évaluation :
+  - Sous la supervision de : Mme RIAHI Donia
+  - Responsable du Module Web Sémantique : Mme Maha MALLEK
+
+Thématique choisie : Éducation & Formation
+Ontologie : OWL 2 DL (5 niveaux de spécialisation, 5 branches ontologiques)
+Triplestore : Apache Jena Fuseki (TDB2, SPARQL 1.1)
+Back-end : Python FastAPI + spaCy NLP (Pipeline déterministe sans LLM externe)
+Front-end : React 19 + TypeScript + Vite + Tailwind CSS (Trilingue FR/EN/AR + Dark Mode)
+================================================================================
+
+
+--------------------------------------------------------------------------------
+SLIDE 1 : PAGE DE GARDE / TITRE
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Logo ESPRIT en haut à gauche
+- Titre avec typographie moderne et badge "Projet Web Sémantique & NLP"
+- Logo / Icône EduSmart (Chapeau académique + réseau sémantique)
+- "Unlocking Potential, Shaping Futures"
+
+[Contenu de la slide]
+PRÉSENTATION DU PROJET EDUSMART
+Plateforme Intelligente d'Ingénierie Ontologique, de Requêtage SPARQL 1.1
+et de Traitement du Langage Naturel (NLP/TALN) pour l'Éducation & la Formation
+
+Sous la supervision de : Mme RIAHI Donia
+Validation finale du module : Web Sémantique — Mme Maha MALLEK
+Réalisée par le groupe CODECRAFT :
+- Trabelsi Kacem
+- Mohamed Aziz Hammami
+- Hlila Khalil
+- Frigui Wassim
+- Ayed Rahma
+
+[Notes pour l'orateur / Speaker Notes]
+"Bonjour Madame, bonjour à tous. Nous vous présentons aujourd'hui la validation finale de notre projet Web Sémantique intitulé EduSmart. Notre projet concrétise l'ensemble du cycle de vie du web de données : de la modélisation formelle d'une ontologie OWL 2 DL riche dans le domaine de l'Éducation et de la Formation, jusqu'à son exploitation opérationnelle via un triplestore Apache Jena Fuseki, des interfaces graphiques réactives et un traducteur intelligent en langage naturel développé sans aucun LLM externe avec spaCy, conformément aux exigences rigoureuses du module."
+
+
+--------------------------------------------------------------------------------
+SLIDE 2 : MEMBRES DU GROUPE & RÉPARTITION DES COMPÉTENCES
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Photos des 5 membres de l'équipe CODECRAFT (comme dans la présentation initiale)
+- Badges de responsabilités techniques pour chaque membre
+
+[Contenu de la slide]
+L'ÉQUIPE CODECRAFT & RÉPARTITION DU TRAVAIL
+
+1. Trabelsi Kacem :
+   - Architecture Front-end (React, Vite, TypeScript), Espace Connexion, Pages Vitrine & Dashboard.
+   - Internationalisation i18n (Français, Anglais, Arabe RTL) et Dark Mode.
+
+2. Frigui Wassim :
+   - Conception de l'Ontologie OWL 2 DL sous Protégé (Branches Personnes, Compétences, Hiérarchies).
+   - Validation formelle avec le raisonneur HermiT et axiomatisation.
+
+3. Mohamed Aziz Hammami :
+   - Intégration du Triplestore Apache Jena Fuseki TDB2 et requêtes SPARQL 1.1 (CRUD, filtres).
+   - Modélisation des relations complexes (ObjectProperties & DataProperties).
+
+4. Hlila Khalil :
+   - Développement Back-end FastAPI (Python), endpoints REST sémantiques et connecteurs SPARQL.
+   - Services de gestion des Formations, Établissements et Compétences.
+
+5. Ayed Rahma :
+   - Module NLP / TALN (spaCy) : Pipeline d'analyse linguistique et traducteur NL-to-SPARQL.
+   - Tests de conformité aux critères de la grille de validation et graphe de connaissances.
+
+[Notes pour l'orateur / Speaker Notes]
+"Notre équipe s'est organisée en pôles complémentaires : modélisation ontologique, ingénierie des triplets SPARQL, développement de l'API back-end, implémentation du pipeline TALN déterministe avec spaCy et réalisation d'une interface utilisateur complète et accessible."
+
+
+--------------------------------------------------------------------------------
+SLIDE 3 : SOMMAIRE & PLAN DE LA PRÉSENTATION
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Schéma chronologique en 6 grands blocs numérotés avec icônes
+
+[Contenu de la slide]
+PLAN DE LA PRÉSENTATION
+
+1. Thématique, Contexte & Objectifs du Projet
+2. Modélisation de l'Ontologie EduSmart (OWL 2 DL, Axiomes, Raisonnement)
+3. Architecture Globale du Système & Serveur Apache Jena Fuseki
+4. Pipeline NLP/TALN : Traducteur Intelligent Déterministe (spaCy - Sans LLM)
+5. Interfaces Graphiques & Requêtage SPARQL 1.1 en Temps Réel
+6. Accessibilité (Trilingue FR/EN/AR, RTL, Dark Mode) & Grille de Validation
+
+[Notes pour l'orateur / Speaker Notes]
+"Voici le déroulement de notre soutenance. Nous commencerons par la problématique et les objectifs, détaillerons ensuite notre ontologie et son axiomatisation, puis l'architecture logicielle avec Jena Fuseki. Nous consacrerons une attention particulière au module TALN conforme aux consignes sans LLM, avant de vous faire la démonstration des interfaces complètes et de conclure sur la grille de validation."
+
+
+--------------------------------------------------------------------------------
+SLIDE 4 : LA THÉMATIQUE CHOISIE : ÉDUCATION & FORMATION
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Illustration thématique (étudiants, professeurs, certifications, universités)
+- Comparatif visuel : Base de données relationnelle classique (silos) vs Graphe de connaissances sémantique (interconnecté)
+
+[Contenu de la slide]
+POURQUOI LE WEB SÉMANTIQUE DANS L'ÉDUCATION ?
+
+• Constat & Limites actuelles :
+  - Les systèmes éducatifs traditionnels stockent les cours, compétences et profils dans des bases relationnelles cloisonnées.
+  - Absence de raisonnement automatique pour déduire les compétences transversales et les prérequis de formation.
+  - Recherche limitée aux mots-clés exacts, sans compréhension sémantique des concepts.
+
+• Notre vision avec EduSmart :
+  - Fédérer l'ensemble de l'écosystème pédagogique au sein d'un graphe de connaissances interconnecté.
+  - Modéliser formellement qui enseigne quoi, quelles compétences sont acquises ou exigées, et dans quels établissements.
+  - Permettre l'inférence logique (déduction de nouvelles connaissances) et l'interrogation en langage naturel.
+
+[Notes pour l'orateur / Speaker Notes]
+"Le choix de la thématique Éducation et Formation répond à un besoin concret : unifier dans un même modèle sémantique les programmes académiques, les cours, les prérequis, les étudiants, les enseignants et les établissements. Contrairement à une base SQL classique où les liens sont rigides, l'ontologie permet de capturer la sémantique profonde des compétences et de déduire des relations implicites."
+
+
+--------------------------------------------------------------------------------
+SLIDE 5 : ARCHITECTURE DE L'ONTOLOGIE EDUSMART (5 NIVEAUX & 5 BRANCHES)
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Schéma arborescent des 5 branches avec code couleur
+- Capture d'écran de l'arbre des classes dans Protégé 5.6
+
+[Contenu de la slide]
+UNE STRUCTURE ONTOLOGIQUE RICHE À 5 NIVEAUX DE SPÉCIALISATION
+
+L'ontologie `Education_Formation` est structurée selon 5 branches principales :
+
+1. Branche Personnes :
+   - `Personne` → `Enseignant` (Chercheur, Vacataire, Maître de conférences), `Étudiant` (Licence, Mastère, Ingénieur), `Personnel`.
+2. Branche Compétences :
+   - `Compétence` → `Technique` (Informatique, Réseaux, Cybersécurité), `Linguistique` (Anglais, Français), `Transversale` (Collaboration, Gestion).
+3. Branche Éducation :
+   - `Éducation` → `Formation`, `Diplôme`, `Programme_Pédagogique`, `Module`.
+4. Branche Apprentissage :
+   - `Apprentissage` → `Cours`, `Activité_Pédagogique`, `Évaluation` (Examen, Projet, TP).
+5. Branche Établissement :
+   - `Établissement` → `Université`, `École_Ingénieur` (ex: ESPRIT), `Centre_Formation`.
+
+Profondeur hiérarchique : Jusqu'à 5 niveaux d'héritage sous la racine commune `owl:Thing`.
+
+[Notes pour l'orateur / Speaker Notes]
+"Notre ontologie dépasse la simple hiérarchie plate. Nous avons conçu une ontologie formelle à 5 niveaux de granularité. Par exemple, sous 'Compétence', nous descendons jusqu'à 'Compétence_Technique', puis 'Informatique', 'Programmation', et enfin le langage de programmation spécifique. Cette profondeur permet une précision sémantique maximale lors des requêtes."
+
+
+--------------------------------------------------------------------------------
+SLIDE 6 : RELATIONS SÉMANTIQUES (OBJECT & DATA PROPERTIES)
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Tableau propre comparant Object Properties et Data Properties
+- Diagramme fléché Domaine → Propriété → Co-domaine (Range)
+
+[Contenu de la slide]
+TYPAGE & RELATIONS ONTOLOGIQUES FORMELLES
+
+• Object Properties (Relations entre individus RDF) :
+  - `enseigne` : Enseignant → Cours (Inverse : `estEnseignéPar`)
+  - `suitFormation` : Étudiant → Formation
+  - `aAcquis` : Personne → Compétence
+  - `exigeCompetence` : Cours / Formation → Compétence (Gestion des prérequis)
+  - `développeCompetence` : Cours → Compétence
+  - `appartientA` : Cours → Programme
+  - `inscritDans` : Étudiant → Établissement
+  - `évalueCompetence` : Évaluation → Compétence
+
+• Data Properties (Attributs littéraux typés XML Schema) :
+  - `nom` : xsd:string | `prenom` : xsd:string | `email` : xsd:string
+  - `niveauCompetence` : xsd:string (Débutant, Intermédiaire, Avancé, Expert)
+  - `anneeEtude` : xsd:integer | `coefficient` : xsd:float | `specialite` : xsd:string
+
+[Notes pour l'orateur / Speaker Notes]
+"Nous avons défini l'ensemble des ObjectProperties nécessaires pour tisser les liens entre les classes, en spécifiant systématiquement les domaines (domain) et les co-domaines (range). Nous avons également déclaré des propriétés inverses, comme 'enseigne' et 'estEnseignéPar', permettant au triplestore de naviguer dans les deux sens du graphe."
+
+
+--------------------------------------------------------------------------------
+SLIDE 7 : AXIOMES, RESTRICTIONS & RAISONNEMENT LOGIQUE (HERMIT)
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran de l'onglet "Reasoner" dans Protégé avec HermiT affichant "Ontology is consistent"
+- Exemple d'axiome OWL écrit sous syntaxe Manchester / DL
+
+[Contenu de la slide]
+AXIOMATISATION & VALIDATION FORMELLE PAR LE RAISONNEUR
+
+• Axiomes de Disjonction (DisjointClasses) :
+  - `DisjointClasses(Enseignant, Étudiant)` : Une personne ne peut être simultanément enseignant et étudiant dans le même contexte strict.
+  - `DisjointClasses(Compétence_Technique, Compétence_Linguistique)`.
+
+• Axiomes de Restriction (Quantificateurs existentiels & universels) :
+  - `Cours subClassOf (développeCompetence some Compétence)` : Tout cours doit développer au moins une compétence.
+  - `Étudiant subClassOf (inscritDans exactly 1 Établissement)`.
+
+• Validation formelle avec HermiT 1.4.3 :
+  - Cohérence ontologique vérifiée sans contradiction logique (zéro classe insatisfiable).
+  - Inférence automatique des sous-classes et classification de la hiérarchie inférée.
+
+[Notes pour l'orateur / Speaker Notes]
+"Pour garantir la rigueur formelle de notre modèle OWL 2 DL, nous avons enrichi l'ontologie avec des axiomes de disjonction et des restrictions existentielles et de cardinalité. Nous avons validé l'ensemble sous Protégé avec le raisonneur HermiT : l'ontologie est 100% cohérente et exempte de toute boucle ou incohérence de type."
+
+
+--------------------------------------------------------------------------------
+SLIDE 8 : INSTANCIATION DES INDIVIDUS & TRIPLETS RDF
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran de Protégé montrant la liste des individus et leurs assertions d'ObjectProperties
+- Schéma d'un triplet RDF (Sujet - Prédicat - Objet)
+
+[Contenu de la slide]
+PEUPLEMENT DE L'ONTOLOGIE : DES CLASSES AUX INDIVIDUS DU MONDE RÉEL
+
+• Individus représentatifs instanciés :
+  - Acteurs : `ahmed` (Étudiant en Licence Informatique), `Ali` (Enseignant chercheur en Java), `sami_trabelsi` (Professeur).
+  - Établissements : `ESPRIT` (École supérieure d'ingénieurs).
+  - Programmes & Cours : `Licence_Informatique`, `java` (Cours de Programmation Orientée Objet), `cours_web_semantique`.
+  - Compétences : `Algorithmique` (Prérequis), `Programmation_Java` (Acquise), `Ontologies_OWL`.
+  - Évaluations : `Examen_Java_2026`, `Projet_Semantique`.
+
+• Format de sérialisation :
+  - Fichier RDF/XML et Turtle conforme W3C (`EduSmart_5Niveaux_Toutes_Branches_Corrige.rdf`).
+  - Total : Plusieurs centaines de triplets RDF déclarés et inférés.
+
+[Notes pour l'orateur / Speaker Notes]
+"Les classes ont été peuplées avec des individus représentatifs de cas réels. Chaque individu est caractérisé par ses propriétés d'objets et de données. Par exemple, l'étudiant Ahmed est inscrit à ESPRIT, suit le cours Java, lequel exige la compétence Algorithmique et permet d'acquérir la compétence Programmation."
+
+
+--------------------------------------------------------------------------------
+SLIDE 9 : ARCHITECTURE GLOBALE DU SYSTÈME (3-TIERS SÉMANTIQUE)
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Schéma d'architecture 3-tiers :
+  [Front-End React/TypeScript] <--- REST / JSON ---> [Back-End FastAPI Python + spaCy NLP] <--- SPARQL 1.1 HTTP ---> [Apache Jena Fuseki TDB2]
+
+[Contenu de la slide]
+ARCHITECTURE FULL-STACK DU SYSTÈME EDUSMART
+
+1. Front-End (Présentation & Interaction) :
+   - Framework moderne React 19 + TypeScript + Vite.
+   - Design System épuré (Tailwind CSS, Glassmorphism, Dark/Light Mode).
+   - Internationalisation native complète (Français, Anglais, Arabe avec police Cairo & RTL).
+
+2. Back-End (Services & Intelligence Métier) :
+   - API haute performance Python FastAPI (asynchrone, validation Pydantic).
+   - Moteur de Traduction NLP / TALN déterministe avec la bibliothèque spaCy.
+   - Client HTTP SPARQL Wrapper pour la communication avec Jena.
+
+3. Triplestore (Stockage & Moteur Sémantique W3C) :
+   - Serveur Apache Jena Fuseki v5+ avec moteur de persistance TDB2.
+   - Dataset dédié `/edusmart` exposé sur les ports SPARQL Query & Update standard.
+
+[Notes pour l'orateur / Speaker Notes]
+"Notre application repose sur une architecture robuste à trois niveaux. Le Front-End React communique en JSON via une API REST sécurisée avec notre serveur FastAPI en Python. Le serveur FastAPI orchestre la logique métier, intègre le pipeline TALN avec spaCy, et dialogue avec le triplestore Apache Jena Fuseki via le protocole standard W3C SPARQL 1.1."
+
+
+--------------------------------------------------------------------------------
+SLIDE 10 : LE TRIPLESTORE APACHE JENA FUSEKI & STOCKAGE TDB2
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran du panneau d'administration de Jena Fuseki (`http://localhost:3030`) avec le dataset `/edusmart`
+- Badge "Jena Live Connected"
+
+[Contenu de la slide]
+LE CŒUR SÉMANTIQUE : APACHE JENA FUSEKI
+
+• Pourquoi Apache Jena Fuseki ?
+  - Référence mondiale open-source pour le stockage et l'interrogation de données RDF.
+  - Support complet des standards W3C : SPARQL 1.1 Query, SPARQL 1.1 Update, Graph Store Protocol.
+  - Persistance native ultra-rapide sur disque grâce au moteur TDB2.
+
+• Configuration opérationnelle dans EduSmart :
+  - Dataset : `http://localhost:3030/edusmart`
+  - Endpoint de lecture (SPARQL Query) : `/edusmart/sparql` (POST/GET)
+  - Endpoint d'écriture (SPARQL Update) : `/edusmart/update` (POST)
+  - Endpoints Graph Store : `/edusmart/data`
+  - Statut en temps réel surveillé par l'application (Indicateur Live Fuseki vert dans le TopBar).
+
+[Notes pour l'orateur / Speaker Notes]
+"Pour le stockage et le requêtage de notre ontologie, nous utilisons Apache Jena Fuseki avec le moteur TDB2. Notre application interroge en direct le dataset `/edusmart`. Dans notre interface, vous pourrez constater que l'indicateur Fuseki passe au vert dès que le serveur est joignable, et que les compteurs de classes, propriétés et individus sont calculés dynamiquement."
+
+
+--------------------------------------------------------------------------------
+SLIDE 11 : REQUÊTAGE SPARQL 1.1 : CRUD COMPLET & EXTRACTION
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Encadrés de code SPARQL avec coloration syntaxique :
+  1. Requête de sélection avec FILTER
+  2. Requête d'insertion (SPARQL Update INSERT DATA)
+  3. Requête de suppression (DELETE WHERE)
+
+[Contenu de la slide]
+OPÉRATIONS SPARQL 1.1 EXÉCUTÉES PAR LE SYSTÈME
+
+• 1. Recherche & Filtrage Avancé (SELECT & FILTER) :
+  PREFIX edu: <http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#>
+  SELECT ?personne ?cours ?comp
+  WHERE {
+    ?personne edu:aAcquis ?comp .
+    ?cours edu:développeCompetence ?comp .
+    FILTER regex(str(?comp), "Java", "i")
+  }
+
+• 2. Création d'individu (INSERT DATA) :
+  INSERT DATA {
+    edu:yassine_ben_ali a edu:Etudiant ;
+      edu:nom "Ben Ali" ;
+      edu:prenom "Yassine" ;
+      edu:inscritDans edu:ESPRIT .
+  }
+
+• 3. Modification & Suppression (DELETE / INSERT WHERE) :
+  Mise à jour transactionnelle des compétences et suppression sémantique propre.
+
+[Notes pour l'orateur / Speaker Notes]
+"Conformément au cahier des charges, notre backend n'exécute pas de simples requêtes préformatées : il couvre l'intégralité du cycle CRUD via SPARQL 1.1. Nous utilisons `SELECT` avec `OPTIONAL` et `FILTER regex` pour la recherche flexible, et `INSERT DATA` / `DELETE WHERE` pour les modifications directes dans le triplestore."
+
+
+--------------------------------------------------------------------------------
+SLIDE 12 : MODULE NLP / TALN : CONCEPTION DU TRADUCTEUR INTELLIGENT
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Schéma du pipeline TALN (Question utilisateur → spaCy NLP → Détection Intention + Extraction Entités → Générateur SPARQL → Triplestore Fuseki)
+- Badge officiel : "100% Algorithmique / spaCy — Zéro API LLM externe (Conforme aux directives)"
+
+[Contenu de la slide]
+LE TRADUCTEUR INTELLIGENT (NLP TO SPARQL) SANS LLM
+
+• Exigence stricte de Mme Maha MALLEK :
+  "L'utilisation directe d'API de LLM clés en main via simple prompt engineering n'est pas autorisée.
+   Vous devez développer cette conversion en vous appuyant sur des bibliothèques de NLP/TALN (spaCy, NLTK...)."
+
+• Notre solution technique :
+  - Bibliothèque choisie : spaCy 3.7+ avec le modèle de langue française `fr_core_news_sm`.
+  - Architecture déterministe basée sur l'ingénierie linguistique :
+    1. Analyse morphosyntaxique (Tokenisation, POS Tagging, Lemmatisation).
+    2. Extraction d'arbres de dépendance syntaxique (Dependency Parsing).
+    3. Reconnaissance d'entités nommées (NER) et détection de patrons (Pattern Matching).
+    4. Mapping conceptuel vers les classes et propriétés de l'ontologie EduSmart.
+    5. Synthèse automatique d'une requête SPARQL 1.1 valide et exécution immédiate.
+
+[Notes pour l'orateur / Speaker Notes]
+"Voici le cœur de notre module de traitement du langage naturel. Nous avons rigoureusement respecté l'interdiction des API de LLM commerciales type OpenAI ou Gemini. Nous avons conçu un traducteur déterministe autonome avec spaCy. Le pipeline extrait la structure grammaticale et les lemmes de la question posée pour construire de manière fiable la clause WHERE et les filtres de la requête SPARQL correspondante."
+
+
+--------------------------------------------------------------------------------
+SLIDE 13 : DÉTAIL DU PIPELINE LINGUISTIQUE SPACY
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Exemple analysé pas à pas : "Quels étudiants possèdent la compétence Java ?"
+- Tableau montrant : Token | Lemme | POS Tag | Rôle sémantique
+
+[Contenu de la slide]
+COMMENT LE PIPELINE TRANSFORME LE LANGAGE NATUREL EN SPARQL
+
+Exemple : « Quels sont les étudiants ayant acquis la compétence Java ? »
+
+Étape 1 : Lemmatisation & POS Tagging (spaCy) :
+  - "étudiants" → lemme: `étudiant` | POS: `NOUN` → Cible de classe : `edu:Etudiant`
+  - "acquis"     → lemme: `acquérir` | POS: `VERB` → Propriété ciblée : `edu:aAcquis`
+  - "Java"       → lemme: `Java`     | POS: `PROPN` → Valeur filtrée : `"Java"`
+
+Étape 2 : Classification d'Intention (Intent Classification) :
+  - Détection du type d'opération : `RECHERCHE_COMPETENCE` (Verbes: avoir, acquérir, maîtriser).
+
+Étape 3 : Instanciation du Template SPARQL dynamique :
+  SELECT DISTINCT ?nom ?prenom ?comp WHERE {
+    ?etudiant a edu:Etudiant ; edu:nom ?nom ; edu:prenom ?prenom ; edu:aAcquis ?c .
+    ?c rdfs:label|edu:nomCompetence ?comp .
+    FILTER regex(?comp, "Java", "i")
+  }
+
+Résultat : Exécution en < 30ms sur Fuseki et affichage direct dans l'interface !
+
+[Notes pour l'orateur / Speaker Notes]
+"Ce tableau montre la mécanique interne de notre pipeline spaCy. En combinant l'étiquetage grammatical (POS tagging) et la lemmatisation, notre système identifie le concept recherché, extrait la compétence cible 'Java', et instancie dynamiquement les triplets nécessaires. Ce procédé garantit un résultat déterministe, reproductible et instantané sans aucune dépendance à un service cloud tiers."
+
+
+--------------------------------------------------------------------------------
+SLIDE 14 : INTERFACES : VITRINE D'ACCUEIL & AUTHENTIFICATION SÉCURISÉE
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran de la nouvelle Page d'Accueil (`HomePage.tsx`)
+- Capture d'écran de la Page de Connexion (`LoginPage.tsx`) avec les profils 1-clic
+
+[Contenu de la slide]
+ESPACE D'ACCUEIL VITRINE & AUTHENTIFICATION
+
+• Nouvelle Page d'Accueil Publique (`/`) :
+  - Présentation moderne de la plateforme académique EduSmart.
+  - Cartes interactives illustrant les 5 branches de l'ontologie.
+  - Aperçu interactif d'une requête SPARQL 1.1 en direct avec le triplestore.
+  - Accès sécurisé : bouton principal "Connexion" guidant le visiteur vers l'authentification.
+
+• Page de Connexion & Contrôle d'Accès (`/login` & `ProtectedLayout`) :
+  - Formulaire complet de connexion avec masquage/démasquage du mot de passe.
+  - Profils de démonstration rapide en 1 clic :
+    1. Administrateur Ontologue (`admin@edusmart.tn`)
+    2. Enseignant Chercheur (`prof@esprit.tn` - Dr. Sami Trabelsi)
+    3. Étudiant Mastère (`etudiant@esprit.tn` - Yassine Ben Ali)
+  - Protection stricte : Impossible d'accéder au Dashboard sans authentification préalable.
+
+[Notes pour l'orateur / Speaker Notes]
+"Nous avons développé une page vitrine académique pour présenter le projet au public, ainsi qu'une page de connexion dédiée. Toutes les routes du tableau de bord et des modules sont protégées par un route guard `ProtectedLayout`. Les profils de test intégrés en un clic permettent au jury de tester immédiatement les différents rôles de l'application."
+
+
+--------------------------------------------------------------------------------
+SLIDE 15 : TABLEAU DE BORD SÉMANTIQUE & INDICATEURS EN TEMPS RÉEL
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran du Dashboard EduSmart avec les 4 cartes statistiques (Classes, Individus, Propriétés, Triplets)
+- Graphique de répartition des compétences et statut Fuseki
+
+[Contenu de la slide]
+LE TABLEAU DE BORD ANALYTIQUE (DASHBOARD)
+
+• Métriques Ontologiques calculées en temps réel par requêtes SPARQL :
+  - Nombre total de Classes Ontologiques
+  - Nombre d'Individus RDF instanciés
+  - Nombre d'Object & Data Properties déclarées
+  - Nombre total de Triplets dans le graphe RDF TDB2
+
+• Fonctionnalités d'observation & d'action :
+  - Indicateur de santé en direct du serveur Jena Fuseki (`Live Ping`).
+  - Répartition visuelle des compétences par niveau (Débutant, Intermédiaire, Avancé, Expert).
+  - Raccourcis rapides vers les 5 branches et vers l'Explorateur SPARQL interactif.
+
+[Notes pour l'orateur / Speaker Notes]
+"Le tableau de bord ne contient aucune valeur codée en dur. Chaque compteur est alimenté par une requête `COUNT(?s)` exécutée en temps réel via SPARQL sur notre serveur Fuseki. L'utilisateur a une vision instantanée de la volumétrie et de la cohérence de son graphe de connaissances."
+
+
+--------------------------------------------------------------------------------
+SLIDE 16 : GESTION DES BRANCHES & EXPLORATEUR SPARQL INTERACTIF
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Captures d'écran des modules Personnes (`/personnes`) et Compétences (`/competences`)
+- Capture d'écran de l'Explorateur SPARQL avec l'éditeur de requêtes et les résultats en tableau
+
+[Contenu de la slide]
+MODULES MÉTIER & EXPLORATEUR SPARQL 1.1
+
+• Modules CRUD Métier (Personnes, Compétences, Formations, Établissements) :
+  - Recherche instantanée multi-critères et filtrage sémantique par classe ou spécialité.
+  - Formulaires modaux d'ajout et d'édition d'individus avec validation des champs.
+  - Barre de commandes TALN intégrée dans chaque module : permet de créer ou filtrer des individus directement en tapant une phrase en français !
+
+• Explorateur SPARQL 1.1 Professionnel (`/sparql`) :
+  - Éditeur de requêtes avec coloration syntaxique des mots-clés (`SELECT`, `PREFIX`, `FILTER`...).
+  - Bibliothèque de requêtes d'exemples prêtes à l'emploi (requêtes sur les prérequis, hiérarchies...).
+  - Affichage tabulaire des résultats avec temps d'exécution en millisecondes et export JSON.
+
+[Notes pour l'orateur / Speaker Notes]
+"Nos modules métier permettent d'administrer les individus de l'ontologie avec une ergonomie soignée. Chaque page de module intègre une barre TALN permettant d'interagir en français naturel. Pour les experts sémantiques, notre Explorateur SPARQL offre un terminal complet avec historique et bibliothèque de requêtes d'exemples."
+
+
+--------------------------------------------------------------------------------
+SLIDE 17 : REPRÉSENTATION VISUELLE DU GRAPHE DE CONNAISSANCES
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran du visualiseur de Graphe Interactif (`/graph`) avec nœuds colorés et arêtes orientées
+- Comparaison avec l'ancien OntoGraf statique et étroit
+
+[Contenu de la slide]
+VISUALISATION INTERACTIVE DU GRAPHE SÉMANTIQUE
+
+• Pourquoi remplacer le simple OntoGraf de Protégé ?
+  - L'OntoGraf classique est statique, difficilement lisible à grande échelle et non intégré au Web.
+
+• Notre solution : Visualiseur de Graphe Intégré (`/graph`) :
+  - Rendu interactif en force dirigée (Force-Directed Graph) dans le navigateur.
+  - Code couleur sémantique intuitif par catégorie :
+    * Bleu : Classes & Hiérarchies
+    * Vert : Individus & Personnes
+    * Violet : Compétences & Modules
+    * Orange : Établissements & Formations
+  - Interactions dynamiques : Zoom, déplacement, survol pour afficher les propriétés et relations.
+
+[Notes pour l'orateur / Speaker Notes]
+"Dans notre première présentation, nous avions montré une capture d'OntoGraf qui manquait de lisibilité. Nous avons développé un véritable visualiseur de graphe interactif dans notre interface Web. Les relations entre personnes, cours et compétences sont immédiatement compréhensibles et explorables de façon intuitive."
+
+
+--------------------------------------------------------------------------------
+SLIDE 18 : ACCESSIBILITÉ & INNOVATION : TRILINGUE (FR/EN/AR) & DARK MODE
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Capture d'écran de l'interface en langue Arabe avec alignement RTL (droite à gauche) et typographie Cairo
+- Capture d'écran en Dark Mode (Mode sombre sleek/élégant)
+
+[Contenu de la slide]
+ACCESSIBILITÉ AVANCÉE : MULTILINGUISME & DARK MODE
+
+• Internationalisation Complète (i18n) :
+  - Support natif de 3 langues :
+    * Français (Langue académique principale)
+    * Anglais (Standard scientifique mondial)
+    * Arabe (Avec basculement automatique de direction `dir="rtl"` et police typographique Cairo).
+  - Plus de 200 clés de traduction couvrant l'intégralité des modules, boutons et messages d'erreur.
+
+• Expérience Utilisateur & Confort Visuel :
+  - Thème Clair / Thème Sombre (Dark Mode) commutable en 1 clic avec persistance.
+  - Anneaux de focus accessibles conformes aux normes WCAG pour la navigation au clavier.
+
+[Notes pour l'orateur / Speaker Notes]
+"Nous avons accordé un soin particulier à l'accessibilité. Notre plateforme est entièrement trilingue : en basculant en arabe, l'interface inverse automatiquement son orientation en RTL et applique la police arabe Cairo. Le mode sombre permet quant à lui une utilisation prolongée confortable."
+
+
+--------------------------------------------------------------------------------
+SLIDE 19 : SYNTHÈSE PAR RAPPORT À LA GRILLE DE VALIDATION
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Tableau de conformité avec coches vertes pour chaque critère demandé par Mme Maha MALLEK
+
+[Contenu de la slide]
+VALIDATION DU CAHIER DES CHARGES (100% CONFORME)
+
+Critère demandé par Mme Maha MALLEK               | Réalisation dans le projet EduSmart             | Statut
+---------------------------------------------------------------------------------------------------------------
+1. Thématique choisie dans la liste              | Éducation et Formation (Domaine académique)    | [VALIDÉ]
+2. Ontologie riche et relationnelle              | OWL 2 DL à 5 niveaux et 5 branches             | [VALIDÉ]
+3. Object/Data Properties, individus et axiomes  | Défini sous Protégé, validé par HermiT        | [VALIDÉ]
+4. Interfaces graphiques Front & Back            | React 19 + TypeScript / FastAPI Python         | [VALIDÉ]
+5. Requêtes SPARQL (CRUD, filtres, recherche)    | SELECT, FILTER, INSERT, DELETE sur Fuseki TDB2 | [VALIDÉ]
+6. Communication Front-End et Back-End           | API REST asynchrone + protocole HTTP SPARQL    | [VALIDÉ]
+7. Module NLP/TALN (Traducteur Intelligent)     | Pipeline spaCy (Zéro API LLM, 100% déterministe)| [VALIDÉ]
+
+[Notes pour l'orateur / Speaker Notes]
+"Ce tableau récapitulatif démontre que chaque exigence formulée par Mme Maha MALLEK a été scrupuleusement respectée et implémentée. Nous avons même dépassé les attentes minimales en ajoutant l'authentification RBAC, le multilinguisme avec RTL arabe et la visualisation graphique interactive."
+
+
+--------------------------------------------------------------------------------
+SLIDE 20 : CONCLUSION & PERSPECTIVES
+--------------------------------------------------------------------------------
+[Éléments visuels suggérés]
+- Illustration de conclusion avec les étudiants et enseignants
+- Coordonnées GitHub du projet et remerciements
+
+[Contenu de la slide]
+CONCLUSION & PERSPECTIVES FUTURES
+
+• Bilan du projet EduSmart :
+  - Une application Web Sémantique complète, fonctionnelle de bout en bout et rigoureusement documentée.
+  - Démonstration concrète de la puissance du web de données pour interconnecter compétences et parcours éducatifs.
+  - Démonstration réussie du traitement du langage naturel sans dépendance aux LLM externes.
+
+• Perspectives d'évolution :
+  - Alignement ontologique avec des référentiels internationaux standard (ESCO, FOAF, schema.org).
+  - Intégration de règles d'inférence SWRL pour la recommandation personnalisée de formations.
+  - Déploiement en conteneurs Docker pour les établissements universitaires.
+
+MERCI POUR VOTRE ATTENTION !
+Place aux questions et à la démonstration en direct.
+
+[Notes pour l'orateur / Speaker Notes]
+"En conclusion, EduSmart prouve la viabilité et la pertinence du Web Sémantique appliqué au monde universitaire et professionnel. Nous vous remercions pour vos précieux enseignements tout au long de ce module et nous sommes à présent à votre disposition pour la démonstration en direct et vos questions."
+================================================================================

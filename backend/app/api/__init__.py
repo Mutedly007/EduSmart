@@ -7,6 +7,7 @@ from .routes.ontology import router as ontology_router
 from .routes.nlp import router as nlp_router
 from .routes.personnes import router as personnes_router
 from .routes.competences import router as competences_router
+from .routes.apprentissage import router as apprentissage_router
 from .routes.formations import router as formations_router
 from .routes.etablissements import router as etablissements_router
 
@@ -30,6 +31,8 @@ api_router.include_router(personnes_router, prefix="/api")
 # Compétences CRUD & TALN endpoints (/api/competences)
 api_router.include_router(competences_router, prefix="/api")
 
+# Apprentissage CRUD & TALN endpoints (/api/apprentissage)
+api_router.include_router(apprentissage_router, prefix="/api")
 # Formation CRUD endpoints (/api/formations)
 api_router.include_router(formations_router, prefix="/api")
 
