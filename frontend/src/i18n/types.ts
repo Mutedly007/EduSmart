@@ -167,4 +167,35 @@ export interface TranslationSchema {
     branchesSubtitle: string;
     quickNavTitle: string;
   };
+  auth: {
+    loginTitle: string;
+    loginSubtitle: string;
+    emailLabel: string;
+    passwordLabel: string;
+    rememberMe: string;
+    signInBtn: string;
+    signingIn: string;
+    quickDemoTitle: string;
+    adminRole: string;
+    profRole: string;
+    studentRole: string;
+    backToHome: string;
+    logout: string;
+    welcomeBack: string;
+  };
+  home: {
+    badge: string;
+    heroTitle: string;
+    heroHighlight: string;
+    heroSubtitle: string;
+    exploreBtn: string;
+    loginBtn: string;
+    dashboardBtn: string;
+    branchesTitle: string;
+    branchesSubtitle: string;
+    featuresTitle: string;
+    featuresSubtitle: string;
+    sparqlPreviewTitle: string;
+    footerText: string;
+  };
 }
