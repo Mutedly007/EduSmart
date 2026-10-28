@@ -35,6 +35,15 @@ from .competence import (
     CompetenceCommandRequest,
     CompetenceCommandResponse,
 )
+from .etablissement import (
+    EtablissementItem,
+    EtablissementCreate,
+    EtablissementUpdate,
+    EtablissementClassItem,
+    EtablissementCommandRequest,
+    EtablissementCommandResponse,
+    EtablissementRelationItem,
+)
 
 __all__ = [
     "AppInfoResponse",
@@ -64,4 +73,11 @@ __all__ = [
     "CompetenceClassItem",
     "CompetenceCommandRequest",
     "CompetenceCommandResponse",
+    "EtablissementItem",
+    "EtablissementCreate",
+    "EtablissementUpdate",
+    "EtablissementClassItem",
+    "EtablissementCommandRequest",
+    "EtablissementCommandResponse",
+    "EtablissementRelationItem",
 ]

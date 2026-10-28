@@ -22,9 +22,12 @@ import {
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { api } from '../services/api';
+import { useTranslation } from '../i18n/LanguageContext';
 import type { CompetenceItem, CompetenceClassItem } from '../types';
 
 export const CompetencesPage: React.FC = () => {
+  const { t, isRtl } = useTranslation();
+
   // Data states
   const [competences, setCompetences] = useState<CompetenceItem[]>([]);
   const [classes, setClasses] = useState<CompetenceClassItem[]>([]);
@@ -256,27 +259,27 @@ export const CompetencesPage: React.FC = () => {
   const getNiveauBadge = (niveau?: string | null) => {
     const niv = (niveau || 'Intermédiaire').toLowerCase();
     if (niv.includes('deb') || niv.includes('déb')) {
-      return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">Débutant</span>;
+      return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">{t.competences.niveaux.debutant}</span>;
     }
     if (niv.includes('avan')) {
-      return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">Avancé</span>;
+      return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">{t.competences.niveaux.avance}</span>;
     }
     if (niv.includes('exp')) {
-      return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Expert</span>;
+      return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{t.competences.niveaux.expert}</span>;
     }
-    return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">Intermédiaire</span>;
+    return <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">{t.competences.niveaux.intermediaire}</span>;
   };
 
   // Helper styles for Category
   const getCategoryBadge = (category?: string | null) => {
     const cat = category || 'Technique';
     if (cat === 'Linguistique') {
-      return <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1"><Languages className="w-3 h-3" /> Linguistique</span>;
+      return <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1"><Languages className="w-3 h-3" /> {t.competences.categories.linguistique}</span>;
     }
     if (cat === 'Transversale') {
-      return <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 flex items-center gap-1"><Share2 className="w-3 h-3" /> Transversale</span>;
+      return <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 flex items-center gap-1"><Share2 className="w-3 h-3" /> {t.competences.categories.transversale}</span>;
     }
-    return <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1"><Cpu className="w-3 h-3" /> Technique</span>;
+    return <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1"><Cpu className="w-3 h-3" /> {t.competences.categories.technique}</span>;
   };
 
   // Stats calculation
@@ -296,15 +299,15 @@ export const CompetencesPage: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-                Gestion des Compétences
+                {t.competences.pageTitle}
               </h1>
-              <Badge variant="blue">Branche Compétence</Badge>
+              <Badge variant="blue">{t.competences.pageBadge}</Badge>
               <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-mono font-medium">
                 W3C SPARQL 1.1
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Architecture ontologique à 5 niveaux : Compétences Techniques, Transversales et Linguistiques avec relations sémantiques.
+              {t.competences.pageSubtitle}
             </p>
           </div>
         </div>
@@ -314,7 +317,7 @@ export const CompetencesPage: React.FC = () => {
             onClick={fetchData}
             disabled={isLoading}
             className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors disabled:opacity-50"
-            title="Rafraîchir les données"
+            title={t.common.refresh}
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
@@ -323,7 +326,7 @@ export const CompetencesPage: React.FC = () => {
             className="flex items-center gap-2 px-4 py-2 bg-edu-700 hover:bg-edu-800 text-white text-sm font-semibold rounded-lg shadow-sm transition-all shadow-edu-700/20 active:scale-95"
           >
             <Plus className="w-4 h-4" />
-            Nouvelle Compétence
+            {t.competences.newCompetence}
           </button>
         </div>
       </div>
@@ -336,7 +339,7 @@ export const CompetencesPage: React.FC = () => {
           </div>
           <div>
             <div className="text-2xl font-bold text-slate-900 leading-none">{totalCount}</div>
-            <div className="text-xs text-slate-500 font-medium mt-1">Total Compétences</div>
+            <div className="text-xs text-slate-500 font-medium mt-1">{t.competences.totalCount}</div>
           </div>
         </Card>
 
@@ -346,7 +349,7 @@ export const CompetencesPage: React.FC = () => {
           </div>
           <div>
             <div className="text-2xl font-bold text-blue-900 leading-none">{countTechnique}</div>
-            <div className="text-xs text-blue-600 font-medium mt-1">Techniques</div>
+            <div className="text-xs text-blue-600 font-medium mt-1">{t.competences.techniqueCount}</div>
           </div>
         </Card>
 
@@ -356,7 +359,7 @@ export const CompetencesPage: React.FC = () => {
           </div>
           <div>
             <div className="text-2xl font-bold text-purple-900 leading-none">{countTransversale}</div>
-            <div className="text-xs text-purple-600 font-medium mt-1">Transversales</div>
+            <div className="text-xs text-purple-600 font-medium mt-1">{t.competences.transversaleCount}</div>
           </div>
         </Card>
 
@@ -366,7 +369,7 @@ export const CompetencesPage: React.FC = () => {
           </div>
           <div>
             <div className="text-2xl font-bold text-teal-900 leading-none">{countLinguistique}</div>
-            <div className="text-xs text-teal-600 font-medium mt-1">Linguistiques</div>
+            <div className="text-xs text-teal-600 font-medium mt-1">{t.competences.linguistiqueCount}</div>
           </div>
         </Card>
       </div>
@@ -376,14 +379,14 @@ export const CompetencesPage: React.FC = () => {
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-4 h-4 text-edu-700 animate-pulse" />
           <h2 className="text-sm font-bold text-slate-800">
-            Assistant TALN / NLP — Commandes en langage naturel
+            {t.competences.talnTitle}
           </h2>
           <span className="text-[10px] bg-edu-100 text-edu-800 font-semibold px-2 py-0.5 rounded-full">
-            spaCy + Règles Sémantiques
+            {t.competences.talnBadge}
           </span>
         </div>
         <p className="text-xs text-slate-600 mb-3">
-          Saisissez une instruction en français pour manipuler directement le triplestore (création, modification, suppression ou recherche).
+          {t.competences.talnSubtitle}
         </p>
 
         <form onSubmit={handleChatSubmit} className="flex gap-2">
@@ -392,14 +395,18 @@ export const CompetencesPage: React.FC = () => {
               type="text"
               value={chatCommand}
               onChange={(e) => setChatCommand(e.target.value)}
-              placeholder="Ex: Créer une compétence nommée Deep Learning de niveau Avancé"
-              className="w-full text-xs py-2.5 pl-3 pr-8 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-edu-600 focus:border-transparent bg-white shadow-inner font-mono text-slate-800"
+              placeholder={t.competences.talnPlaceholder}
+              className={`w-full text-xs py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-edu-600 focus:border-transparent bg-white shadow-inner font-mono text-slate-800 ${
+                isRtl ? 'pr-3 pl-8' : 'pl-3 pr-8'
+              }`}
             />
             {chatCommand && (
               <button
                 type="button"
                 onClick={() => setChatCommand('')}
-                className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600"
+                className={`absolute top-2.5 text-slate-400 hover:text-slate-600 ${
+                  isRtl ? 'left-2.5' : 'right-2.5'
+                }`}
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -412,11 +419,11 @@ export const CompetencesPage: React.FC = () => {
           >
             {isChatExecuting ? (
               <>
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Exécution...
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" /> {t.competences.executing}
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5" /> Exécuter
+                <Sparkles className="w-3.5 h-3.5" /> {t.competences.execute}
               </>
             )}
           </button>
@@ -424,12 +431,12 @@ export const CompetencesPage: React.FC = () => {
 
         {/* Quick Suggestion Chips */}
         <div className="flex flex-wrap items-center gap-1.5 mt-3">
-          <span className="text-[11px] text-slate-400 font-medium">Exemples :</span>
+          <span className="text-[11px] text-slate-400 font-medium">{t.competences.examplesLabel}</span>
           {[
-            'Créer compétence Cloud Computing niveau Avancé',
-            'Lister les compétences techniques',
-            'Modifier le niveau de Algorithmique à Expert',
-            'Ajouter compétence Anglais des Affaires de type Anglais_Technique',
+            isRtl ? 'إنشاء كفاءة الحوسبة السحابية بمستوى متقدم' : 'Créer compétence Cloud Computing niveau Avancé',
+            isRtl ? 'استعراض الكفاءات التقنية' : 'Lister les compétences techniques',
+            isRtl ? 'تعديل مستوى الخوارزميات إلى خبير' : 'Modifier le niveau de Algorithmique à Expert',
+            isRtl ? 'إضافة كفاءة لغة إنجليزية تقنية' : 'Ajouter compétence Anglais des Affaires de type Anglais_Technique',
           ].map((prompt, idx) => (
             <button
               key={idx}
@@ -471,12 +478,12 @@ export const CompetencesPage: React.FC = () => {
             {chatFeedback.sparql && (
               <div className="mt-1 pt-2 border-t border-emerald-200/60">
                 <div className="flex items-center justify-between mb-1 text-[11px] font-semibold text-emerald-800">
-                  <span>Requête SPARQL 1.1 exécutée dans le Triplestore :</span>
+                  <span>{t.common.sparqlQuery} :</span>
                   <button
                     onClick={() => handleCopySparql(chatFeedback.sparql!)}
                     className="flex items-center gap-1 hover:text-emerald-950 font-mono"
                   >
-                    <Copy className="w-3 h-3" /> {copied ? 'Copié !' : 'Copier'}
+                    <Copy className="w-3 h-3" /> {copied ? t.common.copied : 'Copier'}
                   </button>
                 </div>
                 <pre className="bg-slate-900 text-slate-100 p-2.5 rounded font-mono text-[11px] overflow-x-auto whitespace-pre leading-relaxed">
@@ -493,13 +500,15 @@ export const CompetencesPage: React.FC = () => {
         <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row gap-3">
           {/* Keyword Search */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
+            <Search className={`w-4 h-4 absolute top-3 text-slate-400 ${isRtl ? 'right-3' : 'left-3'}`} />
             <input
               type="text"
               value={searchNom}
               onChange={(e) => setSearchNom(e.target.value)}
-              placeholder="Rechercher par titre, description ou mot-clé..."
-              className="w-full text-xs py-2.5 pl-9 pr-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-edu-600 text-slate-800"
+              placeholder={`${t.common.search}...`}
+              className={`w-full text-xs py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-edu-600 text-slate-800 ${
+                isRtl ? 'pr-9 pl-3' : 'pl-9 pr-3'
+              }`}
             />
           </div>
 
@@ -509,10 +518,10 @@ export const CompetencesPage: React.FC = () => {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="text-xs py-2.5 px-3 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-edu-600 font-medium text-slate-700"
           >
-            <option value="Tous">Toutes Catégories</option>
-            <option value="Technique">Technique</option>
-            <option value="Transversale">Transversale</option>
-            <option value="Linguistique">Linguistique</option>
+            <option value="Tous">{t.competences.allCategories}</option>
+            <option value="Technique">{t.competences.categories.technique}</option>
+            <option value="Transversale">{t.competences.categories.transversale}</option>
+            <option value="Linguistique">{t.competences.categories.linguistique}</option>
           </select>
 
           {/* Niveau Filter */}
@@ -521,11 +530,11 @@ export const CompetencesPage: React.FC = () => {
             onChange={(e) => setSelectedNiveau(e.target.value)}
             className="text-xs py-2.5 px-3 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-edu-600 font-medium text-slate-700"
           >
-            <option value="Tous">Tous Niveaux</option>
-            <option value="Débutant">Débutant</option>
-            <option value="Intermédiaire">Intermédiaire</option>
-            <option value="Avancé">Avancé</option>
-            <option value="Expert">Expert</option>
+            <option value="Tous">{t.competences.allNiveaux}</option>
+            <option value="Débutant">{t.competences.niveaux.debutant}</option>
+            <option value="Intermédiaire">{t.competences.niveaux.intermediaire}</option>
+            <option value="Avancé">{t.competences.niveaux.avance}</option>
+            <option value="Expert">{t.competences.niveaux.expert}</option>
           </select>
 
           {/* Subclass Filter */}
@@ -534,7 +543,7 @@ export const CompetencesPage: React.FC = () => {
             onChange={(e) => setSelectedClass(e.target.value)}
             className="text-xs py-2.5 px-3 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-1 focus:ring-edu-600 font-medium text-slate-700 max-w-xs truncate"
           >
-            <option value="Tous">Toutes Sous-Classes ({classes.length})</option>
+            <option value="Tous">{t.competences.allSubclasses} ({classes.length})</option>
             {classes.map((c) => (
               <option key={c.class_name} value={c.class_name}>
                 {c.label || c.class_name} ({c.category})
@@ -548,21 +557,21 @@ export const CompetencesPage: React.FC = () => {
               type="submit"
               className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-colors"
             >
-              Filtrer
+              {t.common.filter}
             </button>
             <button
               type="button"
               onClick={handleResetFilters}
               className="px-3 py-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg text-xs font-medium border border-slate-200 transition-colors"
             >
-              Réinitialiser
+              {t.common.reset}
             </button>
             <button
               type="button"
               onClick={() => setViewMode(viewMode === 'grid' ? 'table' : 'grid')}
               className="px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-xs font-medium border border-slate-200 transition-colors"
             >
-              {viewMode === 'grid' ? 'Vue Tableau' : 'Vue Cartes'}
+              {viewMode === 'grid' ? t.competences.viewTable : t.competences.viewGrid}
             </button>
           </div>
         </form>
@@ -572,26 +581,26 @@ export const CompetencesPage: React.FC = () => {
       {isLoading ? (
         <div className="py-16 text-center text-slate-500 flex flex-col items-center justify-center gap-3">
           <RefreshCw className="w-8 h-8 animate-spin text-edu-600" />
-          <p className="text-sm font-medium">Interrogation du graphe ontologique RDF...</p>
+          <p className="text-sm font-medium">{t.common.loading}</p>
         </div>
       ) : error ? (
         <div className="p-6 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-center">
           <AlertCircle className="w-8 h-8 mx-auto text-rose-600 mb-2" />
-          <h3 className="font-semibold text-sm">Erreur de chargement</h3>
+          <h3 className="font-semibold text-sm">{t.common.error}</h3>
           <p className="text-xs mt-1 text-rose-700">{error}</p>
         </div>
       ) : competences.length === 0 ? (
         <Card className="p-12 text-center text-slate-500 border-dashed border-2">
           <Award className="w-12 h-12 mx-auto text-slate-300 mb-3" />
-          <h3 className="text-sm font-semibold text-slate-700">Aucune compétence trouvée</h3>
+          <h3 className="text-sm font-semibold text-slate-700">{t.competences.emptyTitle}</h3>
           <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
-            Aucun individu ne correspond aux filtres appliqués. Vous pouvez créer une compétence manuellement ou via la commande TALN.
+            {t.competences.emptyDesc}
           </p>
           <button
             onClick={handleOpenCreate}
             className="mt-4 px-4 py-2 bg-edu-700 hover:bg-edu-800 text-white text-xs font-semibold rounded-lg shadow-sm"
           >
-            Ajouter une première compétence
+            {t.competences.addFirst}
           </button>
         </Card>
       ) : viewMode === 'grid' ? (
@@ -633,7 +642,7 @@ export const CompetencesPage: React.FC = () => {
                   {comp.developpee_par && comp.developpee_par.length > 0 && (
                     <div className="flex items-center gap-1 text-slate-600">
                       <BookOpen className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
-                      <span className="font-semibold text-slate-700">Développée par :</span>
+                      <span className="font-semibold text-slate-700">{t.competences.developedBy}</span>
                       <span className="font-mono text-slate-800 truncate">
                         {comp.developpee_par.join(', ')}
                       </span>
@@ -643,7 +652,7 @@ export const CompetencesPage: React.FC = () => {
                   {comp.prerequis_pour && comp.prerequis_pour.length > 0 && (
                     <div className="flex items-center gap-1 text-slate-600">
                       <Layers className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
-                      <span className="font-semibold text-slate-700">Prérequis pour :</span>
+                      <span className="font-semibold text-slate-700">{t.competences.prereqFor}</span>
                       <span className="font-mono text-slate-800 truncate">
                         {comp.prerequis_pour.join(', ')}
                       </span>
@@ -653,7 +662,7 @@ export const CompetencesPage: React.FC = () => {
                   {comp.acquise_par && comp.acquise_par.length > 0 && (
                     <div className="flex items-center gap-1 text-slate-600">
                       <UserCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                      <span className="font-semibold text-slate-700">Acquise par :</span>
+                      <span className="font-semibold text-slate-700">{t.competences.acquiredBy}</span>
                       <span className="font-mono text-slate-800 truncate">
                         {comp.acquise_par.join(', ')}
                       </span>
@@ -677,21 +686,21 @@ SELECT ?p ?o WHERE {
 }`)
                     }
                     className="p-1.5 text-slate-400 hover:text-edu-700 hover:bg-slate-100 rounded"
-                    title="Inspecter le SPARQL"
+                    title={t.common.inspectSparql}
                   >
                     <Code2 className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleOpenEdit(comp)}
                     className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded"
-                    title="Modifier"
+                    title={t.common.edit}
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleOpenDelete(comp)}
                     className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded"
-                    title="Supprimer"
+                    title={t.common.delete}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -704,15 +713,15 @@ SELECT ?p ?o WHERE {
         /* Table View */
         <Card className="overflow-hidden border-slate-200">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-700">
+            <table className="w-full text-start text-xs text-slate-700">
               <thead className="bg-slate-50 text-[11px] font-semibold text-slate-600 uppercase tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Titre / Label</th>
-                  <th className="py-3 px-4">Sous-Classe</th>
-                  <th className="py-3 px-4">Catégorie</th>
-                  <th className="py-3 px-4">Niveau</th>
+                  <th className="py-3 px-4">{t.competences.labelField.replace(' *', '')}</th>
+                  <th className="py-3 px-4">{t.competences.subclassField.replace(' *', '')}</th>
+                  <th className="py-3 px-4">{t.competences.filterCategory.replace('Filtrer par ', '')}</th>
+                  <th className="py-3 px-4">{t.competences.niveauField}</th>
                   <th className="py-3 px-4">Relations</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                  <th className="py-3 px-4 text-end">{t.common.actions}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -746,19 +755,19 @@ SELECT ?p ?o WHERE {
                         )}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-3 px-4 text-end">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleOpenEdit(comp)}
                           className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded"
-                          title="Modifier"
+                          title={t.common.edit}
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleOpenDelete(comp)}
                           className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded"
-                          title="Supprimer"
+                          title={t.common.delete}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -782,8 +791,8 @@ SELECT ?p ?o WHERE {
                   <Award className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Nouvelle Compétence</h3>
-                  <p className="text-[11px] text-slate-500">Ajout d’un individu dans l’ontologie RDF</p>
+                  <h3 className="text-sm font-bold text-slate-900">{t.competences.modalCreateTitle}</h3>
+                  <p className="text-[11px] text-slate-500">{t.competences.modalCreateSubtitle}</p>
                 </div>
               </div>
               <button
@@ -797,7 +806,7 @@ SELECT ?p ?o WHERE {
             <form onSubmit={handleCreateSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Intitulé de la compétence *
+                  {t.competences.labelField}
                 </label>
                 <input
                   type="text"
@@ -812,7 +821,7 @@ SELECT ?p ?o WHERE {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Sous-classe ontologique *
+                    {t.competences.subclassField}
                   </label>
                   <select
                     value={formClass}
@@ -829,24 +838,24 @@ SELECT ?p ?o WHERE {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Niveau d'exigence
+                    {t.competences.niveauField}
                   </label>
                   <select
                     value={formNiveau}
                     onChange={(e) => setFormNiveau(e.target.value)}
                     className="w-full text-xs py-2 px-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-edu-600 text-slate-800"
                   >
-                    <option value="Débutant">Débutant</option>
-                    <option value="Intermédiaire">Intermédiaire</option>
-                    <option value="Avancé">Avancé</option>
-                    <option value="Expert">Expert</option>
+                    <option value="Débutant">{t.competences.niveaux.debutant}</option>
+                    <option value="Intermédiaire">{t.competences.niveaux.intermediaire}</option>
+                    <option value="Avancé">{t.competences.niveaux.avance}</option>
+                    <option value="Expert">{t.competences.niveaux.expert}</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Description pédagogique
+                  {t.competences.descField}
                 </label>
                 <textarea
                   rows={3}
@@ -860,7 +869,7 @@ SELECT ?p ?o WHERE {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Langue cible (Optionnel)
+                    {t.competences.langueField}
                   </label>
                   <input
                     type="text"
@@ -873,7 +882,7 @@ SELECT ?p ?o WHERE {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Identifiant URI personnalisé
+                    {t.competences.uriField}
                   </label>
                   <input
                     type="text"
@@ -891,7 +900,7 @@ SELECT ?p ?o WHERE {
                   onClick={() => setIsCreateModalOpen(false)}
                   className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
-                  Annuler
+                  {t.common.cancel}
                 </button>
                 <button
                   type="submit"
@@ -899,7 +908,7 @@ SELECT ?p ?o WHERE {
                   className="px-4 py-2 bg-edu-700 hover:bg-edu-800 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
                 >
                   {isSubmitting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
-                  Créer dans l'ontologie
+                  {t.common.create}
                 </button>
               </div>
             </form>
@@ -918,7 +927,7 @@ SELECT ?p ?o WHERE {
                 </div>
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">
-                    Modifier : {selectedCompetence.label}
+                    {t.competences.modalEditTitle} : {selectedCompetence.label}
                   </h3>
                   <p className="text-[11px] text-slate-500 font-mono">edu:{selectedCompetence.id}</p>
                 </div>
@@ -934,7 +943,7 @@ SELECT ?p ?o WHERE {
             <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Intitulé de la compétence *
+                  {t.competences.labelField}
                 </label>
                 <input
                   type="text"
@@ -948,7 +957,7 @@ SELECT ?p ?o WHERE {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Sous-classe ontologique
+                    {t.competences.subclassField}
                   </label>
                   <select
                     value={formClass}
@@ -965,24 +974,24 @@ SELECT ?p ?o WHERE {
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Niveau d'exigence
+                    {t.competences.niveauField}
                   </label>
                   <select
                     value={formNiveau}
                     onChange={(e) => setFormNiveau(e.target.value)}
                     className="w-full text-xs py-2 px-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-edu-600 text-slate-800"
                   >
-                    <option value="Débutant">Débutant</option>
-                    <option value="Intermédiaire">Intermédiaire</option>
-                    <option value="Avancé">Avancé</option>
-                    <option value="Expert">Expert</option>
+                    <option value="Débutant">{t.competences.niveaux.debutant}</option>
+                    <option value="Intermédiaire">{t.competences.niveaux.intermediaire}</option>
+                    <option value="Avancé">{t.competences.niveaux.avance}</option>
+                    <option value="Expert">{t.competences.niveaux.expert}</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Description pédagogique
+                  {t.competences.descField}
                 </label>
                 <textarea
                   rows={3}
@@ -994,7 +1003,7 @@ SELECT ?p ?o WHERE {
 
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Langue (Optionnel)
+                  {t.competences.langueField}
                 </label>
                 <input
                   type="text"
@@ -1010,7 +1019,7 @@ SELECT ?p ?o WHERE {
                   onClick={() => setIsEditModalOpen(false)}
                   className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
                 >
-                  Annuler
+                  {t.common.cancel}
                 </button>
                 <button
                   type="submit"
@@ -1018,7 +1027,7 @@ SELECT ?p ?o WHERE {
                   className="px-4 py-2 bg-edu-700 hover:bg-edu-800 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
                 >
                   {isSubmitting ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Edit2 className="w-3.5 h-3.5" />}
-                  Mettre à jour via SPARQL
+                  {t.common.save}
                 </button>
               </div>
             </form>
@@ -1033,14 +1042,14 @@ SELECT ?p ?o WHERE {
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 mx-auto flex items-center justify-center mb-3">
               <Trash2 className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-slate-900">Supprimer la compétence ?</h3>
+            <h3 className="text-base font-bold text-slate-900">{t.competences.modalDeleteTitle}</h3>
             <p className="text-xs text-slate-600 mt-2">
-              Êtes-vous certain de vouloir supprimer l'individu{' '}
+              {t.competences.modalDeleteDesc}{' '}
               <strong className="text-slate-900">« {selectedCompetence.label} »</strong> (
               <span className="font-mono text-slate-700">edu:{selectedCompetence.id}</span>) ?
             </p>
             <p className="text-[11px] text-rose-600 mt-1 font-medium">
-              Cette action supprimera tous les triplets RDF associés dans le triplestore.
+              {t.competences.modalDeleteWarning}
             </p>
 
             <div className="flex items-center justify-center gap-3 mt-6">
@@ -1049,7 +1058,7 @@ SELECT ?p ?o WHERE {
                 onClick={() => setIsDeleteModalOpen(false)}
                 className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 transition-colors"
               >
-                Annuler
+                {t.common.cancel}
               </button>
               <button
                 type="button"
@@ -1058,7 +1067,7 @@ SELECT ?p ?o WHERE {
                 className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg shadow-sm transition-colors flex items-center gap-1.5"
               >
                 {isSubmitting && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
-                Confirmer la suppression
+                {t.common.delete}
               </button>
             </div>
           </div>
@@ -1072,7 +1081,7 @@ SELECT ?p ?o WHERE {
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Code2 className="w-4 h-4 text-edu-700" />
-                <h3 className="text-sm font-bold text-slate-900">Inspecteur SPARQL 1.1</h3>
+                <h3 className="text-sm font-bold text-slate-900">{t.common.inspectSparql}</h3>
               </div>
               <button
                 onClick={() => setActiveSparql(null)}
@@ -1083,12 +1092,12 @@ SELECT ?p ?o WHERE {
             </div>
             <div className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-700">SPARQL Query :</span>
+                <span className="text-xs font-semibold text-slate-700">{t.common.sparqlQuery} :</span>
                 <button
                   onClick={() => handleCopySparql(activeSparql)}
                   className="flex items-center gap-1 text-xs text-edu-700 hover:text-edu-900 font-medium"
                 >
-                  <Copy className="w-3.5 h-3.5" /> {copied ? 'Copié !' : 'Copier la requête'}
+                  <Copy className="w-3.5 h-3.5" /> {copied ? t.common.copied : 'Copier SPARQL'}
                 </button>
               </div>
               <pre className="bg-slate-900 text-slate-100 p-3.5 rounded-lg font-mono text-xs overflow-x-auto whitespace-pre leading-relaxed">
@@ -1100,7 +1109,7 @@ SELECT ?p ?o WHERE {
                 onClick={() => setActiveSparql(null)}
                 className="px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-lg"
               >
-                Fermer
+                {t.common.close}
               </button>
             </div>
           </div>

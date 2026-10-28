@@ -10,6 +10,120 @@
     background-color: #f8fafc;
   }
 
+  html[dir="rtl"], body[dir="rtl"], [dir="rtl"] {
+    font-family: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Accessibility Scaling & Contrast */
+  html.font-large {
+    font-size: 110%;
+  }
+  html.font-xlarge {
+    font-size: 120%;
+  }
+  html.high-contrast {
+    filter: contrast(120%);
+  }
+
+  /* ====================================================
+     DARK MODE THEME SYSTEM
+     ==================================================== */
+  html.dark, html.dark body {
+    color: #f1f5f9;
+    background-color: #0a0e1a;
+  }
+
+  /* Dark surfaces */
+  html.dark .bg-white {
+    background-color: #141c2e !important;
+  }
+
+  html.dark .bg-slate-50,
+  html.dark .bg-slate-50\/40,
+  html.dark .bg-slate-50\/60,
+  html.dark .bg-slate-50\/70,
+  html.dark .bg-slate-50\/80,
+  html.dark .bg-slate-100 {
+    background-color: #0f172a !important;
+  }
+
+  html.dark .bg-slate-100\/80,
+  html.dark .bg-slate-200 {
+    background-color: #1e293b !important;
+  }
+
+  /* Dark text colors */
+  html.dark .text-slate-900,
+  html.dark .text-slate-800 {
+    color: #f8fafc !important;
+  }
+
+  html.dark .text-slate-700,
+  html.dark .text-slate-600 {
+    color: #cbd5e1 !important;
+  }
+
+  html.dark .text-slate-500 {
+    color: #94a3b8 !important;
+  }
+
+  html.dark .text-slate-400 {
+    color: #64748b !important;
+  }
+
+  /* Dark borders */
+  html.dark .border-slate-100,
+  html.dark .border-slate-200,
+  html.dark .border-slate-200\/90,
+  html.dark .border-slate-300 {
+    border-color: #243049 !important;
+  }
+
+  html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+  html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #1e293b !important;
+  }
+
+  /* Inputs, selects and textareas in dark mode */
+  html.dark input,
+  html.dark select,
+  html.dark textarea {
+    background-color: #0b1120 !important;
+    color: #f8fafc !important;
+    border-color: #2e3e5c !important;
+  }
+
+  html.dark input::placeholder,
+  html.dark textarea::placeholder {
+    color: #64748b !important;
+  }
+
+  /* Interactive hover states */
+  html.dark .hover\:bg-slate-50:hover,
+  html.dark .hover\:bg-slate-100:hover,
+  html.dark .hover\:bg-slate-50\/80:hover {
+    background-color: #1e293b !important;
+  }
+
+  /* Modals backdrop and containers in dark mode */
+  html.dark .bg-slate-900\/40,
+  html.dark .bg-slate-900\/50 {
+    background-color: rgba(2, 6, 23, 0.75) !important;
+  }
+
+  /* Header and Sidebar dark overrides */
+  html.dark header {
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+  }
+
+  /* Table head in dark mode */
+  html.dark thead,
+  html.dark thead tr {
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+  }
+
   /* Custom subtle scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
@@ -18,12 +132,21 @@
   ::-webkit-scrollbar-track {
     background: #f1f5f9;
   }
+  html.dark ::-webkit-scrollbar-track {
+    background: #0b0f19;
+  }
   ::-webkit-scrollbar-thumb {
     background: #cbd5e1;
     border-radius: 9999px;
   }
+  html.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+  }
   ::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+  }
+  html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
   }
 }
 
@@ -36,8 +159,18 @@
     box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
   }
 
+  html.dark .academic-card {
+    background-color: #141c2e;
+    border-color: #243049;
+  }
+
   /* Accessible focus rings */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-edu-500 focus:ring-offset-1;
+  .focus-ring:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 2px #2563eb;
+  }
+  html.dark .focus-ring:focus-visible {
+    box-shadow: 0 0 0 2px #3b82f6;
   }
 }
