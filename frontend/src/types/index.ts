@@ -206,7 +206,6 @@ export interface CompetenceCommandResponse {
 }
 
 export interface ApprentissageItem {
-export interface FormationItem {
   id: string;
   uri: string;
   label: string;
@@ -235,6 +234,26 @@ export interface ApprentissageCreate {
 }
 
 export interface ApprentissageClassItem {
+  class_name: string;
+  label: string;
+  category?: string | null;
+  parent?: string | null;
+}
+
+export interface ApprentissageCommandResponse {
+  success: boolean;
+  action: string;
+  message: string;
+  sparql?: string | null;
+  affected_id?: string | null;
+  records?: Record<string, any>[] | null;
+}
+
+export interface FormationItem {
+  id: string;
+  uri: string;
+  label: string;
+  class_name: string;
   description?: string | null;
   duration?: number | string | null;
   objective?: string | null;
@@ -343,7 +362,6 @@ export interface EtablissementClassItem {
   parent?: string | null;
 }
 
-export interface ApprentissageCommandResponse {
 export interface EtablissementCommandResponse {
   success: boolean;
   action: string;

@@ -42,6 +42,7 @@ from .apprentissage import (
     ApprentissageClassItem,
     ApprentissageCommandRequest,
     ApprentissageCommandResponse,
+)
 from .etablissement import (
     EtablissementItem,
     EtablissementCreate,
