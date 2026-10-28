@@ -26,7 +26,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
 
   const navItems = [
     {
-      to: '/',
+      to: '/dashboard',
       label: t.nav.dashboard,
       icon: LayoutDashboard,
       description: t.nav.dashboardDesc,

@@ -6,16 +6,20 @@ import {
   RefreshCw,
   Server,
   Layers,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 import { StatusDot } from '../ui/StatusDot';
 import { LanguageSelector } from '../ui/LanguageSelector';
 import { useBackendHealth } from '../../hooks/useBackendHealth';
 import { useTranslation } from '../../i18n/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 
 export const TopBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t, isRtl } = useTranslation();
+  const { user, isAuthenticated, logout } = useAuth();
   const [globalQuery, setGlobalQuery] = useState('');
 
   const currentRoute = t.topbar.routes[location.pathname] || {
@@ -125,20 +129,46 @@ export const TopBar: React.FC = () => {
           <Bell className="w-4 h-4" />
         </button>
 
-        {/* Profile Avatar */}
-        <div
-          className={`flex items-center gap-2 border-slate-200 select-none ${
-            isRtl ? 'pr-2 border-r' : 'pl-2 border-l'
-          }`}
-        >
-          <div className="w-8 h-8 rounded-full bg-edu-100 text-edu-700 border border-edu-200 flex items-center justify-center font-semibold text-xs">
-            ES
+        {/* Profile Avatar / Auth Status */}
+        {isAuthenticated && user ? (
+          <div
+            className={`flex items-center gap-2 border-slate-200 select-none ${
+              isRtl ? 'pr-2 border-r' : 'pl-2 border-l'
+            }`}
+          >
+            <div className="w-8 h-8 rounded-full bg-edu-100 dark:bg-edu-950 text-edu-700 dark:text-edu-300 border border-edu-200 dark:border-edu-800 flex items-center justify-center font-bold text-xs">
+              {user.initials}
+            </div>
+            <div className="hidden xl:block text-start">
+              <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 leading-tight">
+                {user.name}
+              </div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 leading-tight">
+                {user.role}
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                logout();
+                navigate('/login');
+              }}
+              title={t.auth.logout}
+              aria-label={t.auth.logout}
+              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors ms-1 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
           </div>
-          <div className="hidden xl:block text-start">
-            <div className="text-xs font-semibold text-slate-800 leading-tight">Academic User</div>
-            <div className="text-[10px] text-slate-500 leading-tight">Web Semantics</div>
-          </div>
-        </div>
+        ) : (
+          <button
+            onClick={() => navigate('/login')}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-edu-600 hover:bg-edu-700 text-white rounded-lg text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>{t.auth.signInBtn}</span>
+          </button>
+        )}
       </div>
     </header>
   );
