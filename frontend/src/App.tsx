@@ -46,11 +46,6 @@ export const App: React.FC = () => {
 
         {/* Redirection fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
-
-        </Route>
-
-        {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
