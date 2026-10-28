@@ -113,3 +113,46 @@ def test_add_and_remove_student_to_etablissement() -> None:
     assert del_resp.json()["success"] is True
 
 
+def test_add_and_remove_formation_to_etablissement() -> None:
+    """Verify linking and detaching a formation from an establishment."""
+    response = client.post(
+        "/api/etablissements/Sesame/formations",
+        json={"formation_id": "Formation_Java"},
+    )
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+
+    # Verify that Sesame lists Formation_Java
+    get_resp = client.get("/api/etablissements/Sesame")
+    assert get_resp.status_code == 200
+    formations = [f["id"] for f in get_resp.json()["formations_organisees"]]
+    assert "Formation_Java" in formations
+
+    # Detach formation
+    del_resp = client.delete("/api/etablissements/Sesame/formations/Formation_Java")
+    assert del_resp.status_code == 200
+    assert del_resp.json()["success"] is True
+
+
+def test_add_and_remove_teacher_to_etablissement() -> None:
+    """Verify affiliating and detaching a teacher from an establishment."""
+    response = client.post(
+        "/api/etablissements/Sesame/teachers",
+        json={"teacher_id": "Ali"},
+    )
+    assert response.status_code == 200
+    assert response.json()["success"] is True
+
+    # Verify that Sesame lists Ali
+    get_resp = client.get("/api/etablissements/Sesame")
+    assert get_resp.status_code == 200
+    teachers = [t["id"] for t in get_resp.json()["enseignants_affilies"]]
+    assert "Ali" in teachers
+
+    # Detach teacher
+    del_resp = client.delete("/api/etablissements/Sesame/teachers/Ali")
+    assert del_resp.status_code == 200
+    assert del_resp.json()["success"] is True
+
+
+

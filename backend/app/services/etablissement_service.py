@@ -527,6 +527,91 @@ DELETE DATA {{
             "error": res.get("error"),
         }
 
+    async def add_formation(self, establishment_id: str, formation_id: str) -> Dict[str, Any]:
+        """Link an existing formation to an establishment via SPARQL 1.1 INSERT DATA (edu:organise)."""
+        target_etab_id = _sanitize_id(establishment_id)
+        target_f_id = _sanitize_id(formation_id)
+        if not target_etab_id or not target_f_id:
+            return {"success": False, "error": "Identifiants d'établissement ou de formation invalides."}
+
+        insert_sparql = f"""{PREFIXES}
+INSERT DATA {{
+  edu:{target_etab_id} edu:organise edu:{target_f_id} .
+}}
+"""
+        res = await sparql_service.execute_update(insert_sparql)
+        return {
+            "success": res.get("success", False),
+            "etablissement_id": target_etab_id,
+            "formation_id": target_f_id,
+            "sparql": insert_sparql,
+            "message": f"Formation '{target_f_id}' rattachée avec succès à '{target_etab_id}'.",
+            "error": res.get("error"),
+        }
+
+    async def remove_formation(self, establishment_id: str, formation_id: str) -> Dict[str, Any]:
+        """Detach a formation from an establishment via SPARQL 1.1 DELETE DATA."""
+        target_etab_id = _sanitize_id(establishment_id)
+        target_f_id = _sanitize_id(formation_id)
+
+        delete_sparql = f"""{PREFIXES}
+DELETE DATA {{
+  edu:{target_etab_id} edu:organise edu:{target_f_id} .
+}}
+"""
+        res = await sparql_service.execute_update(delete_sparql)
+        return {
+            "success": res.get("success", False),
+            "etablissement_id": target_etab_id,
+            "formation_id": target_f_id,
+            "sparql": delete_sparql,
+            "message": f"Formation '{target_f_id}' retirée de '{target_etab_id}'.",
+            "error": res.get("error"),
+        }
+
+    async def add_teacher(self, establishment_id: str, teacher_id: str) -> Dict[str, Any]:
+        """Affiliate an existing teacher to an establishment via SPARQL 1.1 INSERT DATA (edu:appartientA)."""
+        target_etab_id = _sanitize_id(establishment_id)
+        target_t_id = _sanitize_id(teacher_id)
+        if not target_etab_id or not target_t_id:
+            return {"success": False, "error": "Identifiants d'établissement ou d'enseignant invalides."}
+
+        insert_sparql = f"""{PREFIXES}
+INSERT DATA {{
+  edu:{target_t_id} edu:appartientA edu:{target_etab_id} .
+}}
+"""
+        res = await sparql_service.execute_update(insert_sparql)
+        return {
+            "success": res.get("success", False),
+            "etablissement_id": target_etab_id,
+            "teacher_id": target_t_id,
+            "sparql": insert_sparql,
+            "message": f"Enseignant '{target_t_id}' rattaché avec succès à '{target_etab_id}'.",
+            "error": res.get("error"),
+        }
+
+    async def remove_teacher(self, establishment_id: str, teacher_id: str) -> Dict[str, Any]:
+        """Detach a teacher from an establishment via SPARQL 1.1 DELETE DATA."""
+        target_etab_id = _sanitize_id(establishment_id)
+        target_t_id = _sanitize_id(teacher_id)
+
+        delete_sparql = f"""{PREFIXES}
+DELETE DATA {{
+  edu:{target_t_id} edu:appartientA edu:{target_etab_id} .
+}}
+"""
+        res = await sparql_service.execute_update(delete_sparql)
+        return {
+            "success": res.get("success", False),
+            "etablissement_id": target_etab_id,
+            "teacher_id": target_t_id,
+            "sparql": delete_sparql,
+            "message": f"Enseignant '{target_t_id}' retiré de '{target_etab_id}'.",
+            "error": res.get("error"),
+        }
+
+
 
     async def export_turtle(self, establishment_id: str) -> str:
         """Export the RDF Turtle representation of an establishment."""

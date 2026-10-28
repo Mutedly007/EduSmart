@@ -109,3 +109,14 @@ class EtablissementAddStudent(BaseModel):
     """Schema for adding an existing student to an establishment."""
     student_id: str = Field(..., min_length=1, description="ID of the student to enroll (e.g. ahmed)")
 
+
+class EtablissementAddFormation(BaseModel):
+    """Schema for linking an existing formation to an establishment."""
+    formation_id: str = Field(..., min_length=1, description="ID of the formation to link (e.g. Formation_Java)")
+
+
+class EtablissementAddTeacher(BaseModel):
+    """Schema for affiliating an existing teacher to an establishment."""
+    teacher_id: str = Field(..., min_length=1, description="ID of the teacher to affiliate (e.g. Ali)")
+
+
