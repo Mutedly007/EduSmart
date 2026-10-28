@@ -103,3 +103,9 @@ class EtablissementCommandResponse(BaseModel):
     sparql: Optional[str] = None
     affected_id: Optional[str] = None
     records: Optional[List[Dict[str, Any]]] = None
+
+
+class EtablissementAddStudent(BaseModel):
+    """Schema for adding an existing student to an establishment."""
+    student_id: str = Field(..., min_length=1, description="ID of the student to enroll (e.g. ahmed)")
+

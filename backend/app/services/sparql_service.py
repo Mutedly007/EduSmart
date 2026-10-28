@@ -27,21 +27,36 @@ class SparqlService:
         self.base_url: str = settings.FUSEKI_BASE_URL
         self._rdflib_graph: Optional[rdflib.Graph] = None
 
+    def _get_ontology_path(self) -> str:
+        """Resolve the absolute path to the OWL ontology file."""
+        backend_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        return (
+            settings.ONTOLOGY_FILE_PATH
+            if os.path.isabs(settings.ONTOLOGY_FILE_PATH)
+            else os.path.join(backend_root, settings.ONTOLOGY_FILE_PATH)
+        )
+
     def _get_local_graph(self) -> rdflib.Graph:
         """Lazy-load the local ontology into RDFLib for offline fallback."""
         if self._rdflib_graph is None:
             g = rdflib.Graph()
-            backend_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            path = (
-                settings.ONTOLOGY_FILE_PATH
-                if os.path.isabs(settings.ONTOLOGY_FILE_PATH)
-                else os.path.join(backend_root, settings.ONTOLOGY_FILE_PATH)
-            )
+            path = self._get_ontology_path()
             if os.path.exists(path):
                 logger.info("Loading fallback RDFLib graph from %s", path)
                 g.parse(path, format="xml")
             self._rdflib_graph = g
         return self._rdflib_graph
+
+    def _persist_local_graph(self) -> None:
+        """Serialize the in-memory RDFLib graph back to the OWL file for persistence across restarts."""
+        if self._rdflib_graph is None:
+            return
+        try:
+            path = self._get_ontology_path()
+            self._rdflib_graph.serialize(destination=path, format="xml")
+            logger.info("RDFLib graph persisted to %s", path)
+        except Exception as e:
+            logger.error("Failed to persist RDFLib graph to disk: %s", e)
 
     async def check_connection(self) -> Tuple[bool, str, int]:
         """Check whether Apache Jena Fuseki is reachable and return triple count.
@@ -158,12 +173,13 @@ class SparqlService:
                 )
                 if resp.status_code in (200, 204):
                     exec_time = (time.perf_counter() - t0) * 1000.0
-                    # Keep local graph in sync if initialized
-                    if self._rdflib_graph is not None:
-                        try:
-                            self._rdflib_graph.update(update_query)
-                        except Exception:
-                            pass
+                    # Keep local graph in sync and persist to disk
+                    try:
+                        g = self._get_local_graph()
+                        g.update(update_query)
+                        self._persist_local_graph()
+                    except Exception as sync_err:
+                        logger.warning("Local graph sync after Fuseki update failed: %s", sync_err)
                     return {
                         "success": True,
                         "message": "Requête SPARQL Update exécutée avec succès dans Fuseki.",
@@ -180,6 +196,8 @@ class SparqlService:
             g = self._get_local_graph()
             g.update(update_query)
             exec_time = (time.perf_counter() - t0) * 1000.0
+            # Persist changes to disk so they survive server restarts
+            self._persist_local_graph()
             return {
                 "success": True,
                 "message": "Requête SPARQL Update exécutée sur le graphe RDFLib local (fallback).",
@@ -196,6 +214,39 @@ class SparqlService:
                 "execution_time_ms": round(exec_time, 2),
                 "error": str(e),
             }
+
+    async def execute_ask(self, query: str) -> bool:
+        """Execute a SPARQL ASK query and return a boolean result.
+
+        Args:
+            query: The SPARQL ASK query string.
+
+        Returns:
+            True if the ASK pattern matches, False otherwise.
+        """
+        # 1. Try Apache Jena Fuseki first
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                resp = await client.post(
+                    self.endpoint,
+                    data={"query": query},
+                    headers={"Accept": "application/sparql-results+json"},
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return bool(data.get("boolean", False))
+                logger.warning("Fuseki ASK returned status %d", resp.status_code)
+        except Exception as e:
+            logger.warning("Fuseki unreachable for ASK query, falling back to RDFLib: %s", e)
+
+        # 2. Fallback to local RDFLib in-memory graph
+        try:
+            g = self._get_local_graph()
+            result = g.query(query)
+            return bool(result.askAnswer)
+        except Exception as e:
+            logger.error("ASK query failed on both Fuseki and RDFLib: %s", e)
+            return False
 
     def _flatten_results(self, raw_sparql_json: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Flatten standard SPARQL JSON results bindings into plain dictionary records."""

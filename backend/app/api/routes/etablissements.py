@@ -11,6 +11,7 @@ from app.schemas.etablissement import (
     EtablissementCreate,
     EtablissementItem,
     EtablissementUpdate,
+    EtablissementAddStudent,
 )
 from app.services.etablissement_service import etablissement_service
 
@@ -151,6 +152,49 @@ async def delete_etablissement(establishment_id: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erreur lors de la suppression de l'établissement: {str(e)}",
         )
+
+
+@router.post("/{establishment_id}/students", summary="Enroll an existing student to an establishment")
+async def add_student_to_establishment(establishment_id: str, data: EtablissementAddStudent):
+    """Enroll an existing student into this establishment via SPARQL 1.1 INSERT DATA (edu:appartientA)."""
+    try:
+        result = await etablissement_service.add_student(establishment_id, data.student_id)
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("error") or "Échec du rattachement de l'étudiant",
+            )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Error adding student %s to establishment %s: %s", data.student_id, establishment_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors du rattachement de l'étudiant: {str(e)}",
+        )
+
+
+@router.delete("/{establishment_id}/students/{student_id}", summary="Remove a student from an establishment")
+async def remove_student_from_establishment(establishment_id: str, student_id: str):
+    """Remove a student link from this establishment via SPARQL 1.1 DELETE DATA."""
+    try:
+        result = await etablissement_service.remove_student(establishment_id, student_id)
+        if not result.get("success"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.get("error") or "Échec du retrait de l'étudiant",
+            )
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error("Error removing student %s from establishment %s: %s", student_id, establishment_id, e)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erreur lors du retrait de l'étudiant: {str(e)}",
+        )
+
 
 
 @router.post("/chat", response_model=EtablissementCommandResponse, summary="Execute natural language command for Établissements")
