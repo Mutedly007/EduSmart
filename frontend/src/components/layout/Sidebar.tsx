@@ -11,6 +11,7 @@ import {
   FileCode2,
   Settings,
   GraduationCap,
+  BookOpen,
   ExternalLink,
 } from 'lucide-react';
 import { useTranslation } from '../../i18n/LanguageContext';
@@ -41,6 +42,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
       label: t.nav.competences,
       icon: Award,
       description: t.nav.competencesDesc,
+      badge: t.nav.crudBadge,
+    },
+    {
+      to: '/apprentissage',
+      label: t.nav.apprentissage,
+      icon: BookOpen,
+      description: t.nav.apprentissageDesc,
       badge: t.nav.crudBadge,
     },
     {

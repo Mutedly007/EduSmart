@@ -9,6 +9,8 @@ export interface TranslationSchema {
     personnesDesc: string;
     competences: string;
     competencesDesc: string;
+    apprentissage: string;
+    apprentissageDesc: string;
     search: string;
     searchDesc: string;
     sparql: string;
@@ -153,6 +155,64 @@ export interface TranslationSchema {
     phoneField: string;
     gradeField: string;
     specialiteField: string;
+  };
+  apprentissage: {
+    pageTitle: string;
+    pageBadge: string;
+    pageSubtitle: string;
+    newApprentissage: string;
+    totalCount: string;
+    evaluationsCount: string;
+    activitesCount: string;
+    parcoursCount: string;
+    talnTitle: string;
+    talnBadge: string;
+    talnSubtitle: string;
+    talnPlaceholder: string;
+    execute: string;
+    executing: string;
+    examplesLabel: string;
+    filterCategory: string;
+    filterModalite: string;
+    filterSubclass: string;
+    allCategories: string;
+    allModalites: string;
+    allSubclasses: string;
+    viewGrid: string;
+    viewTable: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    modalCreateTitle: string;
+    modalCreateSubtitle: string;
+    modalEditTitle: string;
+    modalDeleteTitle: string;
+    modalDeleteDesc: string;
+    labelField: string;
+    subclassField: string;
+    categoryField: string;
+    modaliteField: string;
+    scoreField: string;
+    dateField: string;
+    statutField: string;
+    competenceField: string;
+    descField: string;
+    categories: {
+      evaluation: string;
+      activite: string;
+      parcours: string;
+      type: string;
+    };
+    modalites: {
+      presentiel: string;
+      enLigne: string;
+      hybride: string;
+    };
+    statuts: {
+      planifie: string;
+      enCours: string;
+      termine: string;
+      valide: string;
+    };
   };
   dashboard: {
     welcomeTitle: string;

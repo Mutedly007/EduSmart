@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { PersonnesPage } from './pages/PersonnesPage';
 import { CompetencesPage } from './pages/CompetencesPage';
+import { ApprentissagePage } from './pages/ApprentissagePage';
 import { NLSearchPage } from './pages/NLSearchPage';
 import { SPARQLExplorerPage } from './pages/SPARQLExplorerPage';
 import { KnowledgeGraphPage } from './pages/KnowledgeGraphPage';
@@ -32,6 +33,7 @@ export const App: React.FC = () => {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/personnes" element={<PersonnesPage />} />
           <Route path="/competences" element={<CompetencesPage />} />
+          <Route path="/apprentissage" element={<ApprentissagePage />} />
           <Route path="/search" element={<NLSearchPage />} />
           <Route path="/sparql" element={<SPARQLExplorerPage />} />
           <Route path="/graph" element={<KnowledgeGraphPage />} />

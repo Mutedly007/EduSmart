@@ -35,6 +35,14 @@ from .competence import (
     CompetenceCommandRequest,
     CompetenceCommandResponse,
 )
+from .apprentissage import (
+    ApprentissageItem,
+    ApprentissageCreate,
+    ApprentissageUpdate,
+    ApprentissageClassItem,
+    ApprentissageCommandRequest,
+    ApprentissageCommandResponse,
+)
 
 __all__ = [
     "AppInfoResponse",
@@ -64,4 +72,10 @@ __all__ = [
     "CompetenceClassItem",
     "CompetenceCommandRequest",
     "CompetenceCommandResponse",
+    "ApprentissageItem",
+    "ApprentissageCreate",
+    "ApprentissageUpdate",
+    "ApprentissageClassItem",
+    "ApprentissageCommandRequest",
+    "ApprentissageCommandResponse",
 ]

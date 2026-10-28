@@ -21,6 +21,10 @@ import type {
   CompetenceCreate,
   CompetenceClassItem,
   CompetenceCommandResponse,
+  ApprentissageItem,
+  ApprentissageCreate,
+  ApprentissageClassItem,
+  ApprentissageCommandResponse,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -203,6 +207,53 @@ class ApiClient {
 
   async executeCompetenceChat(command: string): Promise<CompetenceCommandResponse> {
     return this.request<CompetenceCommandResponse>('/api/competences/chat', {
+      method: 'POST',
+      body: JSON.stringify({ command }),
+    });
+  }
+
+  // --- Apprentissage CRUD & TALN ---
+  async getApprentissages(params?: {
+    name?: string;
+    class_name?: string;
+    category?: string;
+    modalite?: string;
+  }): Promise<ApprentissageItem[]> {
+    const query = new URLSearchParams();
+    if (params?.name) query.set('name', params.name);
+    if (params?.class_name) query.set('class_name', params.class_name);
+    if (params?.category) query.set('category', params.category);
+    if (params?.modalite) query.set('modalite', params.modalite);
+    const qs = query.toString() ? `?${query.toString()}` : '';
+    return this.request<ApprentissageItem[]>(`/api/apprentissage${qs}`);
+  }
+
+  async getApprentissageClasses(): Promise<ApprentissageClassItem[]> {
+    return this.request<ApprentissageClassItem[]>('/api/apprentissage/classes');
+  }
+
+  async createApprentissage(data: ApprentissageCreate): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>('/api/apprentissage', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateApprentissage(id: string, data: Partial<ApprentissageCreate>): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/apprentissage/${encodeURIComponent(id)}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteApprentissage(id: string): Promise<{ success: boolean; id: string; sparql: string; message: string }> {
+    return this.request<{ success: boolean; id: string; sparql: string; message: string }>(`/api/apprentissage/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async executeApprentissageChat(command: string): Promise<ApprentissageCommandResponse> {
+    return this.request<ApprentissageCommandResponse>('/api/apprentissage/chat', {
       method: 'POST',
       body: JSON.stringify({ command }),
     });
