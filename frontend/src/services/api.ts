@@ -367,6 +367,20 @@ class ApiClient {
     });
   }
 
+  async addStudentToEtablissement(establishmentId: string, studentId: string): Promise<{ success: boolean; message: string; sparql: string }> {
+    return this.request<{ success: boolean; message: string; sparql: string }>(`/api/etablissements/${encodeURIComponent(establishmentId)}/students`, {
+      method: 'POST',
+      body: JSON.stringify({ student_id: studentId }),
+    });
+  }
+
+  async removeStudentFromEtablissement(establishmentId: string, studentId: string): Promise<{ success: boolean; message: string; sparql: string }> {
+    return this.request<{ success: boolean; message: string; sparql: string }>(`/api/etablissements/${encodeURIComponent(establishmentId)}/students/${encodeURIComponent(studentId)}`, {
+      method: 'DELETE',
+    });
+  }
+
+
   getBaseUrl(): string {
     return this.baseUrl;
   }

@@ -66,3 +66,50 @@ def test_etablissement_chat_command() -> None:
     assert data["success"] is True
     assert data["action"] == "list"
     assert "records" in data
+
+
+def test_etablissement_chat_create() -> None:
+    """Verify TALN creation adds an establishment that appears in records and the list."""
+    import uuid
+    uid = uuid.uuid4().hex[:6]
+    label = f"Campus_{uid}"
+    response = client.post(
+        "/api/etablissements/chat",
+        json={"command": f"créer une université privée nommée {label} à Tunis"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["action"] == "create"
+    assert any(x["label"] == label or x["id"] == label for x in data["records"])
+
+    # Verify /api/etablissements includes it
+    list_resp = client.get("/api/etablissements")
+    assert list_resp.status_code == 200
+    assert any(x["label"] == label or x["id"] == label for x in list_resp.json())
+
+
+def test_add_and_remove_student_to_etablissement() -> None:
+    """Verify enrolling and detaching a student from an establishment."""
+    # Enroll student 'ahmed' into ESPRIT or Sesame
+    response = client.post(
+        "/api/etablissements/Sesame/students",
+        json={"student_id": "ahmed"},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+
+    # Check that Sesame now lists ahmed
+    get_resp = client.get("/api/etablissements/Sesame")
+    assert get_resp.status_code == 200
+    etab_data = get_resp.json()
+    student_ids = [s["id"] for s in etab_data["etudiants_inscrits"]]
+    assert "ahmed" in student_ids
+
+    # Remove student
+    del_resp = client.delete("/api/etablissements/Sesame/students/ahmed")
+    assert del_resp.status_code == 200
+    assert del_resp.json()["success"] is True
+
+

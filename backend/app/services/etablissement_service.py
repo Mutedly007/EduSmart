@@ -114,10 +114,19 @@ class EtablissementService:
         query = f"""{PREFIXES}
         SELECT DISTINCT ?uri ?label ?class_name ?nomProp ?ville ?adresse ?siteWeb ?telephone ?email ?statut ?description ?modeEnseignement ?domaine WHERE {{
           ?uri a ?type .
-          ?type rdfs:subClassOf* ?root .
-          FILTER(CONTAINS(STR(?root), "tablissement") && ?type != owl:NamedIndividual)
+          {{
+            ?type rdfs:subClassOf* ?root .
+            FILTER(CONTAINS(STR(?root), "tablissement") && ?type != owl:NamedIndividual)
+          }} UNION {{
+            VALUES ?type {{
+              edu:Universite_Privee edu:Universite_Publique edu:Universite
+              edu:Ecole edu:Institut edu:Centre_Formation edu:Etablissement
+              edu:Université_Privée edu:Université_Publique edu:Université
+              edu:École edu:Établissement
+            }}
+          }}
           BIND(STRAFTER(STR(?type), "#") AS ?class_name)
-          FILTER(?class_name != "Thing" && ?class_name != "Établissement" && ?class_name != "NamedIndividual")
+          FILTER(?class_name != "Thing" && ?class_name != "Établissement" && ?class_name != "Etablissement" && ?class_name != "NamedIndividual")
           
           OPTIONAL {{ ?uri rdfs:label ?label }}
           OPTIONAL {{ ?uri edu:nom ?nomProp }}
@@ -359,6 +368,7 @@ INSERT DATA {{
         return {
             "success": res.get("success", False),
             "id": target_id,
+            "source": res.get("source", ""),
             "uri": f"http://www.semanticweb.org/msi/ontologies/2026/9/Education_Formation#{target_id}",
             "sparql": insert_sparql,
             "error": res.get("error"),
@@ -475,6 +485,49 @@ DELETE WHERE {{
             "error": res.get("error"),
         }
 
+    async def add_student(self, establishment_id: str, student_id: str) -> Dict[str, Any]:
+        """Enroll an existing student into an establishment via SPARQL 1.1 INSERT DATA (edu:appartientA)."""
+        target_etab_id = _sanitize_id(establishment_id)
+        target_student_id = _sanitize_id(student_id)
+        if not target_etab_id or not target_student_id:
+            return {"success": False, "error": "Identifiants d'établissement ou d'étudiant invalides."}
+
+        insert_sparql = f"""{PREFIXES}
+INSERT DATA {{
+  edu:{target_student_id} edu:appartientA edu:{target_etab_id} .
+}}
+"""
+        res = await sparql_service.execute_update(insert_sparql)
+        return {
+            "success": res.get("success", False),
+            "etablissement_id": target_etab_id,
+            "student_id": target_student_id,
+            "sparql": insert_sparql,
+            "message": f"Étudiant '{target_student_id}' rattaché avec succès à '{target_etab_id}'.",
+            "error": res.get("error"),
+        }
+
+    async def remove_student(self, establishment_id: str, student_id: str) -> Dict[str, Any]:
+        """Detach a student from an establishment via SPARQL 1.1 DELETE DATA."""
+        target_etab_id = _sanitize_id(establishment_id)
+        target_student_id = _sanitize_id(student_id)
+
+        delete_sparql = f"""{PREFIXES}
+DELETE DATA {{
+  edu:{target_student_id} edu:appartientA edu:{target_etab_id} .
+}}
+"""
+        res = await sparql_service.execute_update(delete_sparql)
+        return {
+            "success": res.get("success", False),
+            "etablissement_id": target_etab_id,
+            "student_id": target_student_id,
+            "sparql": delete_sparql,
+            "message": f"Étudiant '{target_student_id}' retiré de '{target_etab_id}'.",
+            "error": res.get("error"),
+        }
+
+
     async def export_turtle(self, establishment_id: str) -> str:
         """Export the RDF Turtle representation of an establishment."""
         target_id = _sanitize_id(establishment_id)
@@ -559,14 +612,25 @@ DELETE WHERE {{
             )
             res = await self.create(create_data)
             all_items = await self.get_all()
+            if not res.get("success"):
+                return {
+                    "success": False,
+                    "action": "create",
+                    "message": res.get("error") or f"Échec de l'insertion de '{name_clean}' dans le triplestore.",
+                    "sparql": res.get("sparql"),
+                    "affected_id": None,
+                    "records": [x.model_dump() for x in all_items],
+                }
+            source_label = "Fuseki" if "fuseki" in (res.get("source") or "") else "le triplestore local (RDFLib)"
             return {
-                "success": res.get("success", False),
+                "success": True,
                 "action": "create",
-                "message": f"L'établissement '{name_clean}' ({c_name}) à {city_clean} a été inséré dans Fuseki via SPARQL INSERT DATA.",
+                "message": f"✅ L'établissement '{name_clean}' ({c_name}) à {city_clean} a été inséré dans {source_label} via SPARQL INSERT DATA.",
                 "sparql": res.get("sparql"),
                 "affected_id": res.get("id"),
                 "records": [x.model_dump() for x in all_items],
             }
+
 
         # 2. DELETE COMMAND: e.g. "supprimer l'établissement SESAME", "delete university ESPRIT"
         delete_match = re.search(
@@ -680,8 +744,17 @@ DELETE WHERE {{
         query_sparql = f"""{PREFIXES}
 SELECT DISTINCT ?etablissement ?nom ?ville ?siteWeb ?statut WHERE {{
   ?etablissement a ?type .
-  ?type rdfs:subClassOf* ?root .
-  FILTER(CONTAINS(STR(?root), "tablissement"))
+  {{
+    ?type rdfs:subClassOf* ?root .
+    FILTER(CONTAINS(STR(?root), "tablissement") && ?type != owl:NamedIndividual)
+  }} UNION {{
+    VALUES ?type {{
+      edu:Universite_Privee edu:Universite_Publique edu:Universite
+      edu:Ecole edu:Institut edu:Centre_Formation edu:Etablissement
+      edu:Université_Privée edu:Université_Publique edu:Université
+      edu:École edu:Établissement
+    }}
+  }}
   OPTIONAL {{ ?etablissement edu:nom ?nom }}
   OPTIONAL {{ ?etablissement edu:ville ?ville }}
   OPTIONAL {{ ?etablissement edu:siteWeb ?siteWeb }}

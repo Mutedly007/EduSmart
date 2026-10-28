@@ -618,8 +618,17 @@ SELECT DISTINCT ?enseignant ?nom ?grade ?email ?specialite ?identifiant WHERE {{
             query = f"""{PREFIXES}
 SELECT DISTINCT ?etablissement ?nom ?ville ?adresse ?siteWeb ?statut ?type WHERE {{
     ?etablissement a ?type .
-    ?type rdfs:subClassOf* ?root .
-    FILTER(CONTAINS(STR(?root), "tablissement") && ?type != owl:NamedIndividual)
+    {{
+        ?type rdfs:subClassOf* ?root .
+        FILTER(CONTAINS(STR(?root), "tablissement") && ?type != owl:NamedIndividual)
+    }} UNION {{
+        VALUES ?type {{
+            edu:Universite_Privee edu:Universite_Publique edu:Universite
+            edu:Ecole edu:Institut edu:Centre_Formation edu:Etablissement
+            edu:Université_Privée edu:Université_Publique edu:Université
+            edu:École edu:Établissement
+        }}
+    }}
     OPTIONAL {{ ?etablissement edu:nom ?nom }}
 {clauses_str}
     OPTIONAL {{ ?etablissement edu:adresse ?adresse }}

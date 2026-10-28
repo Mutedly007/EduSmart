@@ -25,6 +25,7 @@ import {
   LayoutGrid,
   List as ListIcon,
   Share2,
+  UserPlus,
 } from 'lucide-react';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -33,6 +34,7 @@ import type {
   EtablissementItem,
   EtablissementClassItem,
   EtablissementCreate,
+  PersonneItem,
 } from '../types';
 
 export const EtablissementsPage: React.FC = () => {
@@ -85,6 +87,12 @@ export const EtablissementsPage: React.FC = () => {
   // Turtle Export Modal
   const [turtleContent, setTurtleContent] = useState<string | null>(null);
   const [isTurtleModalOpen, setIsTurtleModalOpen] = useState<boolean>(false);
+
+  // Add Student Modal
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState<boolean>(false);
+  const [availableStudents, setAvailableStudents] = useState<PersonneItem[]>([]);
+  const [selectedStudentId, setSelectedStudentId] = useState<string>('');
+  const [isLoadingStudents, setIsLoadingStudents] = useState<boolean>(false);
 
   // Load initial data
   const fetchData = async () => {
@@ -142,8 +150,16 @@ export const EtablissementsPage: React.FC = () => {
         sparql: res.sparql,
       });
 
-      // Refresh data
-      await fetchData();
+      if (res.success) {
+        // If the backend returned the updated list, use it directly.
+        // This avoids re-fetching from RDFLib which loses in-memory SPARQL inserts.
+        if (res.records && res.records.length > 0) {
+          setEtablissements(res.records as EtablissementItem[]);
+        } else {
+          // Fallback for list/search commands that don't return records
+          await fetchData();
+        }
+      }
       setChatCommand('');
     } catch (err: unknown) {
       setChatFeedback({
@@ -154,6 +170,7 @@ export const EtablissementsPage: React.FC = () => {
       setIsChatExecuting(false);
     }
   };
+
 
   // Open Create Modal
   const handleOpenCreate = () => {
@@ -201,6 +218,46 @@ export const EtablissementsPage: React.FC = () => {
       setIsTurtleModalOpen(true);
     } catch (err: unknown) {
       alert("Erreur lors de l'export Turtle");
+    }
+  };
+
+  // Open Add Student Modal
+  const handleOpenAddStudent = async (item: EtablissementItem) => {
+    setSelectedEtab(item);
+    setIsAddStudentModalOpen(true);
+    setIsLoadingStudents(true);
+    try {
+      const students = await api.getPersonnes({ class_name: 'Etudiant' });
+      if (students && students.length > 0) {
+        setAvailableStudents(students);
+        setSelectedStudentId(students[0]?.id || '');
+      } else {
+        const allPersons = await api.getPersonnes();
+        setAvailableStudents(allPersons);
+        setSelectedStudentId(allPersons[0]?.id || '');
+      }
+    } catch (err: unknown) {
+      console.error('Erreur chargement étudiants', err);
+    } finally {
+      setIsLoadingStudents(false);
+    }
+  };
+
+  // Submit Add Student
+  const handleAddStudentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEtab || !selectedStudentId) return;
+
+    setIsSubmitting(true);
+    try {
+      const res = await api.addStudentToEtablissement(selectedEtab.id, selectedStudentId);
+      setActiveSparql(res.sparql);
+      setIsAddStudentModalOpen(false);
+      await fetchData();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Erreur lors du rattachement de l'étudiant");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -803,6 +860,14 @@ export const EtablissementsPage: React.FC = () => {
                 <div className="flex items-center gap-1.5">
                   <button
                     type="button"
+                    onClick={() => handleOpenAddStudent(item)}
+                    className="p-1.5 text-slate-600 hover:text-purple-700 hover:bg-purple-50 rounded transition-colors"
+                    title="Rattacher un étudiant (edu:appartientA)"
+                  >
+                    <UserPlus className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => handleOpenEdit(item)}
                     className="p-1.5 text-slate-600 hover:text-sky-700 hover:bg-sky-50 rounded transition-colors"
                     title="Modifier l'établissement"
@@ -873,6 +938,13 @@ export const EtablissementsPage: React.FC = () => {
                       </button>
                     </td>
                     <td className="py-3 px-4 text-right space-x-1">
+                      <button
+                        onClick={() => handleOpenAddStudent(item)}
+                        className="p-1 text-slate-500 hover:text-purple-700 rounded"
+                        title="Rattacher un étudiant"
+                      >
+                        <UserPlus className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(item)}
                         className="p-1 text-slate-500 hover:text-sky-700 rounded"
@@ -1323,6 +1395,110 @@ export const EtablissementsPage: React.FC = () => {
                 Fermer
               </button>
             </div>
+          </Card>
+        </div>
+      )}
+
+      {/* 9bis. MODAL RATTACHEMENT D'UN ÉTUDIANT (edu:appartientA) */}
+      {isAddStudentModalOpen && selectedEtab && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
+          <Card className="w-full max-w-lg p-6 bg-white border-slate-200 shadow-xl">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-purple-100 text-purple-700 rounded-lg">
+                  <UserPlus className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base">Rattacher un Étudiant</h3>
+                  <p className="text-xs text-slate-500">
+                    Établissement cible : <span className="font-semibold text-purple-700">{selectedEtab.label}</span>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddStudentModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddStudentSubmit} className="space-y-4">
+              <div className="p-3 bg-purple-50/70 border border-purple-100 rounded-xl text-xs text-purple-900">
+                <span className="font-semibold">Relation sémantique W3C : </span>
+                <code className="font-mono bg-white px-1.5 py-0.5 rounded border border-purple-200 text-purple-800">
+                  edu:{'{étudiant}'} edu:appartientA edu:{selectedEtab.id}
+                </code>
+              </div>
+
+              {/* Étudiants déjà inscrits */}
+              {selectedEtab.etudiants_inscrits.length > 0 && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Étudiants actuellement rattachés ({selectedEtab.etudiants_inscrits.length})
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedEtab.etudiants_inscrits.map((s) => (
+                      <span
+                        key={s.id}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium"
+                      >
+                        <Users className="w-3 h-3 text-purple-600" />
+                        {s.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Sélectionner un étudiant existant dans la base
+                </label>
+                {isLoadingStudents ? (
+                  <div className="flex items-center justify-center p-6 text-slate-500 text-xs gap-2">
+                    <RefreshCw className="w-4 h-4 animate-spin text-purple-600" />
+                    Chargement des étudiants...
+                  </div>
+                ) : availableStudents.length === 0 ? (
+                  <div className="p-4 bg-amber-50 text-amber-800 rounded-lg text-xs border border-amber-200">
+                    Aucun étudiant trouvé dans la branche Personnes.
+                  </div>
+                ) : (
+                  <select
+                    value={selectedStudentId}
+                    onChange={(e) => setSelectedStudentId(e.target.value)}
+                    className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white text-slate-900 font-medium"
+                    required
+                  >
+                    {availableStudents.map((st) => (
+                      <option key={st.id} value={st.id}>
+                        {st.label} (ID: edu:{st.id} {st.specialite ? `• ${st.specialite}` : ''})
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsAddStudentModalOpen(false)}
+                  className="px-4 py-2 text-slate-600 text-xs font-semibold hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || isLoadingStudents || !selectedStudentId}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 shadow-sm"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  {isSubmitting ? 'Rattachement...' : "Confirmer l'inscription"}
+                </button>
+              </div>
+            </form>
           </Card>
         </div>
       )}
